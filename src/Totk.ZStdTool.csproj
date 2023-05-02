@@ -8,11 +8,15 @@
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<DebugType>embedded</DebugType>
+	<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <None Remove=".gitignore" />
     <None Remove="Assets\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\icon.ico" />
   </ItemGroup>
   <ItemGroup>
 	<!--This helps with theme dll-s trimming.
