@@ -31,6 +31,9 @@ public class ZStdHelper
         _commonCompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapCompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
         _packCompressor.LoadDictionary(sarc["pack.zsdic"]);
+        _commonCompressor.Level = 15;
+        _mapCompressor.Level = 15;
+        _packCompressor.Level = 15;
     }
 
     public static Span<byte> Decompress(string file)
