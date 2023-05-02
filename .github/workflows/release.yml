@@ -74,7 +74,9 @@ jobs:
           -r ${{ matrix.config.runtime }} \
           -c Release \
           --sc false \
+          --version-suffix ${{ github.event.release.tag_name }} \
           -o ${{ matrix.config.name }} \
+          -p:Version=${{ github.event.release.tag_name }} \
           -p:PublishSingleFile=true \
           -p:IncludeNativeLibrariesForSelfExtract=true
 
