@@ -183,8 +183,10 @@ public class ShellViewModel : ReactiveObject
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
-            if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
-                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive));
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path))
+            {
+                StartLoading();
+                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
 
                 ContentDialog dlg = new() {
                     Content = $"Folder compressed to '{path}'",
@@ -194,6 +196,7 @@ public class ShellViewModel : ReactiveObject
                 };
 
                 await dlg.ShowAsync();
+                StopLoading();
             }
         }
         catch (Exception ex) {
