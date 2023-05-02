@@ -40,9 +40,14 @@
                             Content="Browse"
                             CornerRadius="0,3,3,0" />
                 </Grid>
-                <Button Command="{Binding Decompress}"
-                        Content="Decompress"
-                        IsEnabled="{Binding CanDecompress}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <Button Command="{Binding Decompress}"
+                          Content="Decompress"
+                          IsEnabled="{Binding CanDecompress}" />
+                  <Button Command="{Binding Compress}"
+                          Content="Compress"
+                          IsEnabled="{Binding CanCompress}" />
+                </StackPanel>
                 <Border Height="1" Background="{DynamicResource ControlStrokeColorOnAccentDefault}" />
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBox Name="FolderNameEntry"
@@ -61,7 +66,10 @@
                     <Button Command="{Binding DecompressFolder}"
                             Content="Decompress Folder"
                             IsEnabled="{Binding CanDecompressFolder}" />
-                    <CheckBox Content="Decompress Folder Recursively" IsChecked="{Binding DecompressRecursive}" />
+                    <Button Command="{Binding CompressFolder}"
+                            Content="Compress Folder"
+                            IsEnabled="{Binding CanCompressFolder}" />
+                    <CheckBox Content="De/Compress Folder Recursively" IsChecked="{Binding DecompressRecursive}" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
