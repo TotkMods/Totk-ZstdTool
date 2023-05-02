@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
-using System.Diagnostics;
 using Totk.ZStdTool.Helpers;
 
 namespace Totk.ZStdTool.ViewModels;
