@@ -1,0 +1,3 @@
+[submodule "lib/Cead"]
+	path = lib/Cead
+	url = https://github.com/ArchLeaders/Cead

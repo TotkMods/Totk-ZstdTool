@@ -31,6 +31,9 @@
     <PackageReference Include="FluentAvaloniaUI" Version="2.0.0-preview7" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\lib\Cead\src\Cead.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Using Include="ReactiveUI" />
   </ItemGroup>
 </Project>
