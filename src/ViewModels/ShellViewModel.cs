@@ -102,20 +102,17 @@ public class ShellViewModel : ReactiveObject
             await dlg.ShowAsync();
         }
     }
-    
+
     public async Task Compress()
     {
-        try
-        {
+        try {
             string outputFile = $"{Path.GetFileName(FilePath)}.zs";
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
-            if (await dialog.ShowDialog() is string path)
-            {
+            if (await dialog.ShowDialog() is string path) {
                 using FileStream fs = File.Create(path);
                 fs.Write(ZStdHelper.Compress(FilePath));
 
-                ContentDialog dlg = new()
-                {
+                ContentDialog dlg = new() {
                     Content = $"File compressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
@@ -125,12 +122,9 @@ public class ShellViewModel : ReactiveObject
                 await dlg.ShowAsync();
             }
         }
-        catch (Exception ex)
-        {
-            ContentDialog dlg = new()
-            {
-                Content = new TextBox
-                {
+        catch (Exception ex) {
+            ContentDialog dlg = new() {
+                Content = new TextBox {
                     MaxHeight = 250,
                     Text = ex.ToString(),
                     IsReadOnly = true,
@@ -183,8 +177,7 @@ public class ShellViewModel : ReactiveObject
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
-            if (await dialog.ShowDialog() is string path && Directory.Exists(path))
-            {
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
                 StartLoading();
                 await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
 

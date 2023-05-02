@@ -28,7 +28,7 @@ public class ZStdHelper
         _commonDecompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapDecompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
         _packDecompressor.LoadDictionary(sarc["pack.zsdic"]);
-        
+
         _commonCompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapCompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
         _packCompressor.LoadDictionary(sarc["pack.zsdic"]);
@@ -75,8 +75,7 @@ public class ZStdHelper
             .ToArray();
         setCount?.Invoke(files.Length);
 
-        for (int i = 0; i < files.Length; i++)
-        {
+        for (int i = 0; i < files.Length; i++) {
             string file = files[i];
             Span<byte> data = Compress(file);
 

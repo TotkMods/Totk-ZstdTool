@@ -41,12 +41,12 @@
                             CornerRadius="0,3,3,0" />
                 </Grid>
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <Button Command="{Binding Decompress}"
-                          Content="Decompress"
-                          IsEnabled="{Binding CanDecompress}" />
-                  <Button Command="{Binding Compress}"
-                          Content="Compress"
-                          IsEnabled="{Binding CanCompress}" />
+                    <Button Command="{Binding Decompress}"
+                            Content="Decompress"
+                            IsEnabled="{Binding CanDecompress}" />
+                    <Button Command="{Binding Compress}"
+                            Content="Compress"
+                            IsEnabled="{Binding CanCompress}" />
                 </StackPanel>
                 <Border Height="1" Background="{DynamicResource ControlStrokeColorOnAccentDefault}" />
                 <Grid ColumnDefinitions="*,Auto">
