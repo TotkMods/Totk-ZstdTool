@@ -78,7 +78,8 @@ jobs:
           -o ${{ matrix.config.name }} \
           -p:Version=${{ github.event.release.tag_name }} \
           -p:PublishSingleFile=true \
-          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:IncludeNativeLibrariesForSelfExtract=true \
+          -p:PublishReadyToRun=true
 
       - name: Upload artifacts
         uses: Shopify/upload-to-release@v1.0.1
