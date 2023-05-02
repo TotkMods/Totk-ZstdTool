@@ -49,7 +49,7 @@ public class ShellViewModel : ReactiveObject
     {
         var mode = param as string;
         if (mode == "File") {
-            BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs", instanceBrowserKey: "load");
+            BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs|Any File:*.*", instanceBrowserKey: "load");
             if (await dialog.ShowDialog() is string path) {
                 FilePath = path;
             }
