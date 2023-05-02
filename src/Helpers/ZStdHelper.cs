@@ -16,9 +16,9 @@ public class ZStdHelper
     private static readonly Decompressor _commonDecompressor = new();
     private static readonly Decompressor _mapDecompressor = new();
     private static readonly Decompressor _packDecompressor = new();
-    private static readonly Compressor _commonCompressor = new();
-    private static readonly Compressor _mapCompressor = new();
-    private static readonly Compressor _packCompressor = new();
+    private static readonly Compressor _commonCompressor = new(15);
+    private static readonly Compressor _mapCompressor = new(15);
+    private static readonly Compressor _packCompressor = new(15);
 
     static ZStdHelper()
     {
@@ -28,12 +28,10 @@ public class ZStdHelper
         _commonDecompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapDecompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
         _packDecompressor.LoadDictionary(sarc["pack.zsdic"]);
+        
         _commonCompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapCompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
         _packCompressor.LoadDictionary(sarc["pack.zsdic"]);
-        _commonCompressor.Level = 15;
-        _mapCompressor.Level = 15;
-        _packCompressor.Level = 15;
     }
 
     public static Span<byte> Decompress(string file)
