@@ -3,10 +3,46 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Title="ShellView"
+        Title="Totk ZStd Tool"
+        Width="450"
+        Height="250"
+        MinWidth="450"
+        MinHeight="250"
+        MaxWidth="650"
+        MaxHeight="450"
         d:DesignHeight="450"
         d:DesignWidth="800"
         Icon="/Assets/icon.ico"
         mc:Ignorable="d">
-    Welcome to Avalonia!
+    <Grid>
+        <Grid Margin="20" RowDefinitions="Auto,*,Auto">
+            <StackPanel>
+                <TextBlock FontSize="22"
+                           FontWeight="Bold"
+                           Text="Tears of the Kingdom zStd Tool" />
+                <Border Height="1"
+                        Margin="0,10,0,0"
+                        Background="{DynamicResource ControlStrokeColorOnAccentDefault}" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Margin="0,0,5,0"
+                             CornerRadius="3,0,0,3"
+                             Text="{Binding FilePath}"
+                             Watermark="File Path" />
+                    <Button Grid.Column="1"
+                            Command="{Binding Browse}"
+                            Content="Browse"
+                            CornerRadius="0,3,3,0" />
+                </Grid>
+                <Button Margin="0,15,0,0"
+                        Command="{Binding Decompress}"
+                        Content="Decompress"
+                        IsEnabled="{Binding CanDecompress}" />
+            </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Command="{Binding ShowSettings}" Content="Settings" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>
