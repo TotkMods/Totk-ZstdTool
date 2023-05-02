@@ -86,7 +86,7 @@ public class ShellViewModel : ReactiveObject
         };
 
         if (await dlg.ShowAsync() == ContentDialogResult.Primary) {
-            var stack = dlg.Content as StackPanel;
+            var stack = (dlg.Content as ScrollViewer)!.Content as StackPanel;
             App.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
             App.Config.Save();
         }
