@@ -10,6 +10,10 @@ public class TotkConfig
 
     public static TotkConfig Load()
     {
+        if (!File.Exists(_path)) {
+            return Create();
+        }
+
         using FileStream fs = File.OpenRead(_path);
         return JsonSerializer.Deserialize<TotkConfig>(fs) ?? Create();
     }
