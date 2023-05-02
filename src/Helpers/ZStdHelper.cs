@@ -35,4 +35,16 @@ public class ZStdHelper
             file.EndsWith(".pack.zs") ? _packDecompressor.Unwrap(src) :
             _commonDecompressor.Unwrap(src);
     }
+
+    public static void DecompressFolder(string path, string output, bool recursive)
+    {
+        foreach (var file in Directory.EnumerateFiles(path, "*.zs", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)) {
+            Span<byte> data = Decompress(file);
+
+            string outputFile = Path.Combine(output, Path.GetRelativePath(path, file.Remove(file.Length - 3, 3)));
+            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+            using FileStream fs = File.Create(outputFile);
+            fs.Write(data);
+        }
+    }
 }

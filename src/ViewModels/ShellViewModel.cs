@@ -20,6 +20,24 @@ public class ShellViewModel : ReactiveObject
     private bool _canDecompress = false;
     public bool CanDecompress => _canDecompress;
 
+    private bool _decompressRecursive = true;
+    public bool DecompressRecursive {
+        get => _decompressRecursive;
+        set => this.RaiseAndSetIfChanged(ref _decompressRecursive, value);
+    }
+
+    private string _folderPath = string.Empty;
+    public string FolderPath {
+        get => _folderPath;
+        set {
+            this.RaiseAndSetIfChanged(ref _folderPath, value);
+            this.RaiseAndSetIfChanged(ref _canDecompressFolder, Directory.Exists(value), nameof(CanDecompressFolder));
+        }
+    }
+
+    private bool _canDecompressFolder;
+    public bool CanDecompressFolder => _canDecompressFolder;
+
     public async Task Browse()
     {
         BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs", instanceBrowserKey: "load");
@@ -39,6 +57,47 @@ public class ShellViewModel : ReactiveObject
 
                 ContentDialog dlg = new() {
                     Content = $"File Decompressed to '{path}'",
+                    DefaultButton = ContentDialogButton.Primary,
+                    PrimaryButtonText = "Close",
+                    Title = "Notice"
+                };
+
+                await dlg.ShowAsync();
+            }
+        }
+        catch (Exception ex) {
+            ContentDialog dlg = new() {
+                Content = new TextBox {
+                    MaxHeight = 250,
+                    Text = ex.ToString(),
+                    IsReadOnly = true,
+                },
+                PrimaryButtonText = "OK",
+                Title = "Unhandled Exception"
+            };
+
+            await dlg.ShowAsync();
+        }
+    }
+
+    public async Task BrowseFolder()
+    {
+        BrowserDialog dialog = new(BrowserMode.OpenFolder, "Open Folder", instanceBrowserKey: "load-fld");
+        if (await dialog.ShowDialog() is string path) {
+            FolderPath = path;
+        }
+    }
+
+    public async Task DecompressFolder()
+    {
+        try {
+            string outputFile = Path.GetFileNameWithoutExtension(FilePath);
+            BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
+                await Task.Run(() => ZStdHelper.DecompressFolder(FolderPath, path, DecompressRecursive));
+
+                ContentDialog dlg = new() {
+                    Content = $"Folder Decompressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
                     Title = "Notice"
