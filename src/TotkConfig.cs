@@ -16,6 +16,7 @@ public class TotkConfig
 
     public void Save()
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
         FileStream fs = File.Create(_path);
         JsonSerializer.Serialize(fs, this);
     }
