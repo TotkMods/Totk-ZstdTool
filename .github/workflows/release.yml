@@ -78,8 +78,7 @@ jobs:
           -p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Upload artifacts
-        uses: Shopify/upload-to-release@v1.0.1
+        uses: AButler/upload-release-assets@v2.0
         with:
-          name: ZSTD-Tool-${{ github.event.release.tag_name }}${{ matrix.config.ext }}
-          path: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
+          repo-token: ${{ secrets.AUTH_TOKEN }}
