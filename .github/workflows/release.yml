@@ -78,7 +78,7 @@ jobs:
           -p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Upload Release Assets
-        uses: actions/upload-release-asset@master
+        uses: tanyagray/action-upload-release-asset@v1.1.3
         env:
           GITHUB_TOKEN: ${{ secrets.AUTH_TOKEN }}
         with:
