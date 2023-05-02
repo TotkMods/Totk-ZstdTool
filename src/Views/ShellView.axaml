@@ -68,5 +68,18 @@
                 <Button Command="{Binding ShowSettings}" Content="Settings" />
             </StackPanel>
         </Grid>
+        <Border Background="Black"
+                IsVisible="{Binding IsLoading}"
+                Opacity="0.8">
+            <StackPanel Margin="15"
+                        VerticalAlignment="Center"
+                        Spacing="10">
+                <TextBlock FontSize="16"
+                           FontWeight="Bold"
+                           Text="{Binding LoadingDots, StringFormat=Processing Files{0}}" />
+                <TextBlock FontSize="14" Text="{Binding ProcessCount}" />
+                <ProgressBar IsIndeterminate="{Binding IsLoading}" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

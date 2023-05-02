@@ -36,15 +36,21 @@ public class ZStdHelper
             _commonDecompressor.Unwrap(src);
     }
 
-    public static void DecompressFolder(string path, string output, bool recursive)
+    public static void DecompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null)
     {
-        foreach (var file in Directory.EnumerateFiles(path, "*.zs", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)) {
+        string[] files = Directory.GetFiles(path, "*.zs", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        setCount?.Invoke(files.Length);
+
+        for (int i = 0; i < files.Length; i++) {
+            var file = files[i];
             Span<byte> data = Decompress(file);
 
             string outputFile = Path.Combine(output, Path.GetRelativePath(path, file.Remove(file.Length - 3, 3)));
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
             using FileStream fs = File.Create(outputFile);
             fs.Write(data);
+
+            updateCount?.Invoke(i + 1);
         }
     }
 }
