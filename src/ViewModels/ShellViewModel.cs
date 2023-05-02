@@ -23,7 +23,7 @@ public class ShellViewModel : ReactiveObject
 
     public async Task Browse()
     {
-        BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs");
+        BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs", instanceBrowserKey: "load");
         if (await dialog.ShowDialog() is string path) {
             FilePath = path;
         }
@@ -33,7 +33,7 @@ public class ShellViewModel : ReactiveObject
     {
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
-            BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Decompressed File", $"Raw File:*{Path.GetExtension(outputFile)}|Any File:*.*", outputFile);
+            BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Decompressed File", $"Raw File:*{Path.GetExtension(outputFile)}|Any File:*.*", outputFile, "save");
             if (await dialog.ShowDialog() is string path) {
                 using FileStream fs = File.Create(path);
                 fs.Write(ZStdHelper.Decompress(FilePath));
