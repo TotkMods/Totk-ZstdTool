@@ -4,6 +4,8 @@
 
 A simple tool to decompress `.zs` files in Totk, compression support is also planned for the future
 
+<img src="https://user-images.githubusercontent.com/80713508/235627583-a7faaf2d-d643-4010-bfa6-c8db3966fd3f.png" width="400">
+
 ## Setup
 
 - Download the .NET 7 Runtime
