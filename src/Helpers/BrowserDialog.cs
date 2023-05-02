@@ -16,10 +16,11 @@ public class BrowserDialog
     public static IStorageFolder? LastOpenDirectory { get; set; }
     public static IStorageFolder? LastSaveDirectory { get; set; }
 
-    private readonly BrowserMode Mode;
-    private string? Title;
-    private readonly string? Filter;
-    private readonly string? InstanceBrowserKey;
+    private readonly BrowserMode _mode;
+    private string? _title;
+    private readonly string? _filter;
+    private readonly string? _suggestedFileName;
+    private readonly string? _instanceBrowserKey;
 
     /// <summary>
     /// 
@@ -28,12 +29,13 @@ public class BrowserDialog
     /// <param name="title"></param>
     /// <param name="filter">Semicolon delimited list of file filters. (Syntax: <c>Yaml Files<see cref="char">:</see>*.yml<see cref="char">;</see>*.yaml<see cref="char">|</see>All Files<see cref="char">:</see>*.*</c>)</param>
     /// <param name="instanceBrowserKey">Saves the last open/save directory as an instance mapped to the specified key</param>
-    public BrowserDialog(BrowserMode mode, string? title = null, string? filter = null, string? instanceBrowserKey = null)
+    public BrowserDialog(BrowserMode mode, string? title = null, string? filter = null, string? suggestedFileName = null, string? instanceBrowserKey = null)
     {
-        Mode = mode;
-        Title = title;
-        Filter = filter;
-        InstanceBrowserKey = instanceBrowserKey;
+        _mode = mode;
+        _title = title;
+        _filter = filter;
+        _suggestedFileName = suggestedFileName;
+        _instanceBrowserKey = instanceBrowserKey;
 
         if (instanceBrowserKey != null) {
             if (!Stashed.ContainsKey(instanceBrowserKey)) {
@@ -55,26 +57,27 @@ public class BrowserDialog
     /// <returns></returns>
     public async Task<IEnumerable<string>?> ShowDialog(bool allowMultiple)
     {
-        Title ??= Mode.ToString().Replace("F", " F");
+        _title ??= _mode.ToString().Replace("F", " F");
 
         IStorageProvider StorageProvider = App.VisualRoot!.StorageProvider;
 
-        object? result = Mode switch {
+        object? result = _mode switch {
             BrowserMode.OpenFolder => await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() {
-                Title = Title,
+                Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
                 AllowMultiple = allowMultiple
             }),
             BrowserMode.OpenFile => await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions() {
-                Title = Title,
+                Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
                 AllowMultiple = allowMultiple,
-                FileTypeFilter = LoadFileBrowserFilter(Filter)
+                FileTypeFilter = LoadFileBrowserFilter(_filter)
             }),
             BrowserMode.SaveFile => await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions() {
-                Title = Title,
+                Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
-                FileTypeChoices = LoadFileBrowserFilter(Filter)
+                FileTypeChoices = LoadFileBrowserFilter(_filter),
+                SuggestedFileName = _suggestedFileName
             }),
             _ => throw new NotImplementedException()
         };
@@ -100,33 +103,33 @@ public class BrowserDialog
 
     internal void SetLastDirectory(IStorageFolder? folder)
     {
-        if (Mode == BrowserMode.SaveFile) {
+        if (_mode == BrowserMode.SaveFile) {
             LastSaveDirectory = folder;
-            if (InstanceBrowserKey != null) {
-                Stashed[InstanceBrowserKey].SaveDirectory = folder;
+            if (_instanceBrowserKey != null) {
+                Stashed[_instanceBrowserKey].SaveDirectory = folder;
             }
         }
         else {
             LastOpenDirectory = folder;
-            if (InstanceBrowserKey != null) {
-                Stashed[InstanceBrowserKey].OpenDirectory = folder;
+            if (_instanceBrowserKey != null) {
+                Stashed[_instanceBrowserKey].OpenDirectory = folder;
             }
         }
     }
 
     internal IStorageFolder? GetLastDirectory()
     {
-        if (Mode == BrowserMode.SaveFile) {
-            if (InstanceBrowserKey != null) {
-                return Stashed[InstanceBrowserKey].SaveDirectory;
+        if (_mode == BrowserMode.SaveFile) {
+            if (_instanceBrowserKey != null) {
+                return Stashed[_instanceBrowserKey].SaveDirectory;
             }
             else {
                 return LastSaveDirectory;
             }
         }
         else {
-            if (InstanceBrowserKey != null) {
-                return Stashed[InstanceBrowserKey].OpenDirectory;
+            if (_instanceBrowserKey != null) {
+                return Stashed[_instanceBrowserKey].OpenDirectory;
             }
             else {
                 return LastOpenDirectory;
