@@ -14,12 +14,15 @@ public class ShellViewModel : ReactiveObject
         get => _filePath;
         set {
             this.RaiseAndSetIfChanged(ref _filePath, value);
-            this.RaiseAndSetIfChanged(ref _canDecompress, File.Exists(value), nameof(CanDecompress));
+            this.RaiseAndSetIfChanged(ref _canDecompress, File.Exists(value) && Path.GetExtension(value) == ".zs", nameof(CanDecompress));
+            this.RaiseAndSetIfChanged(ref _canCompress, File.Exists(value) && Path.GetExtension(value) != ".zs", nameof(CanCompress));
         }
     }
 
     private bool _canDecompress = false;
     public bool CanDecompress => _canDecompress;
+    private bool _canCompress = false;
+    public bool CanCompress => _canCompress;
 
     private bool _decompressRecursive = true;
     public bool DecompressRecursive {
@@ -33,11 +36,14 @@ public class ShellViewModel : ReactiveObject
         set {
             this.RaiseAndSetIfChanged(ref _folderPath, value);
             this.RaiseAndSetIfChanged(ref _canDecompressFolder, Directory.Exists(value), nameof(CanDecompressFolder));
+            this.RaiseAndSetIfChanged(ref _canCompressFolder, Directory.Exists(value), nameof(CanCompressFolder));
         }
     }
 
     private bool _canDecompressFolder;
     public bool CanDecompressFolder => _canDecompressFolder;
+    private bool _canCompressFolder;
+    public bool CanCompressFolder => _canCompressFolder;
 
     public async Task Browse(object param)
     {
@@ -96,6 +102,46 @@ public class ShellViewModel : ReactiveObject
             await dlg.ShowAsync();
         }
     }
+    
+    public async Task Compress()
+    {
+        try
+        {
+            string outputFile = $"{Path.GetFileName(FilePath)}.zs";
+            BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
+            if (await dialog.ShowDialog() is string path)
+            {
+                using FileStream fs = File.Create(path);
+                fs.Write(ZStdHelper.Compress(FilePath));
+
+                ContentDialog dlg = new()
+                {
+                    Content = $"File compressed to '{path}'",
+                    DefaultButton = ContentDialogButton.Primary,
+                    PrimaryButtonText = "Close",
+                    Title = "Notice"
+                };
+
+                await dlg.ShowAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Content = new TextBox
+                {
+                    MaxHeight = 250,
+                    Text = ex.ToString(),
+                    IsReadOnly = true,
+                },
+                PrimaryButtonText = "OK",
+                Title = "Unhandled Exception"
+            };
+
+            await dlg.ShowAsync();
+        }
+    }
 
     public async Task DecompressFolder()
     {
@@ -108,6 +154,42 @@ public class ShellViewModel : ReactiveObject
 
                 ContentDialog dlg = new() {
                     Content = $"Folder Decompressed to '{path}'",
+                    DefaultButton = ContentDialogButton.Primary,
+                    PrimaryButtonText = "Close",
+                    Title = "Notice"
+                };
+
+                await dlg.ShowAsync();
+                StopLoading();
+            }
+        }
+        catch (Exception ex) {
+            ContentDialog dlg = new() {
+                Content = new TextBox {
+                    MaxHeight = 250,
+                    Text = ex.ToString(),
+                    IsReadOnly = true,
+                },
+                PrimaryButtonText = "OK",
+                Title = "Unhandled Exception"
+            };
+
+            await dlg.ShowAsync();
+        }
+    }
+
+    public async Task CompressFolder()
+    {
+        try {
+            string outputFile = Path.GetFileNameWithoutExtension(FilePath);
+            BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path))
+            {
+                StartLoading();
+                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
+
+                ContentDialog dlg = new() {
+                    Content = $"Folder compressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
                     Title = "Notice"
