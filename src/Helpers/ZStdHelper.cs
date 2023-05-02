@@ -70,18 +70,12 @@ public class ZStdHelper
 
     public static void CompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null)
     {
-        string[] allFiles = Directory.GetFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-        List<string> files = new(allFiles.Length);
-        foreach (string file in allFiles)
-        {
-            if (Path.GetExtension(file) != ".zs")
-            {
-                files.Add(file);
-            }
-        }
-        setCount?.Invoke(files.Count);
+        string[] files = Directory.EnumerateFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            .Where(path => Path.GetExtension(path) != ".zs" && Path.GetFileName(path) != "ZsDic.pack")
+            .ToArray();
+        setCount?.Invoke(files.Length);
 
-        for (int i = 0; i < files.Count; i++)
+        for (int i = 0; i < files.Length; i++)
         {
             string file = files[i];
             Span<byte> data = Compress(file);
