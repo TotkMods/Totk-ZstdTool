@@ -45,7 +45,8 @@ public class ZStdHelper
     public static Span<byte> Compress(string file)
     {
         Span<byte> src = File.ReadAllBytes(file);
-        return file.EndsWith(".bcett.byml") ? _mapCompressor.Wrap(src) :
+        return
+            file.EndsWith(".bcett.byml") ? _mapCompressor.Wrap(src) :
             file.EndsWith(".pack") ? _packCompressor.Wrap(src) :
             _commonCompressor.Wrap(src);
     }
