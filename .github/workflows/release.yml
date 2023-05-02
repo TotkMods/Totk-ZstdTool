@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    name: Build ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: Linux
+            os: ubuntu-latest
+            ext: ""
+            runtime: linux-x64
+            build: linux
+            vars: CXX="g++"
+            setup: |
+              sudo apt-get update
+              sudo apt-get install ninja-build cmake
+              ninja --version
+              cmake --version
+              gcc --version
+          - name: Windows
+            os: windows-latest
+            ext: .exe
+            runtime: win-x64
+            setup: |
+              choco install ninja cmake
+              ninja --version
+              cmake --version
+
+    env:
+      proj: "Totk.ZStdTool"
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        run: ${{ matrix.config.setup }}
+
+      - name: Configure Cead (native)
+        shell: bash
+        run: |
+          mkdir ./lib/Cead/native/build
+          ${{ matrix.config.vars }} \
+          cmake --no-warn-unused-cli \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE \
+            -DCMAKE_BUILD_TYPE:STRING=Release \
+            -S ./lib/Cead/native \
+            -B ./lib/Cead/native/build/${{ matrix.config.build }} \
+            -G "Ninja"
+
+      - name: Build Cead (native)
+        shell: bash
+        run: |
+          cmake --build ./lib/Cead/native/build/${{ matrix.config.build }} --config Release --target all -j 4
+
+      - name: Install DotNET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "7.0.x"
+
+      - name: Publish Totk ZStd Tool
+        shell: bash
+        run: |
+          dotnet publish src/${{ env.proj }}.csproj \
+          -r ${{ matrix.config.runtime }} \
+          -c Release \
+          --sc false \
+          -o ${{ matrix.config.name }} \
+          -p:PublishSingleFile=true \
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTH_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
+          asset_name: ZSTD-Tool-${{ github.event.release.tag_name }}${{ matrix.config.ext }}
+          asset_content_type: application/zip
