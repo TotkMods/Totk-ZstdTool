@@ -20,6 +20,8 @@ public static class CommandProcessor
                 Print this help message:
                     -h, --help
                 """);
+
+            return;
         }
 
         Dictionary<char, string> flags = args
@@ -33,6 +35,8 @@ public static class CommandProcessor
             _ => throw new NotImplementedException(
                 $"Invalid command '{args[0]}'. Use --help to get a list of all commands."),
         };
+
+        command(args[1], flags);
     }
 
     public static char AsFlag(this string input)
