@@ -13,59 +13,67 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        if (args?.Length > 0)
-        {
-            CLI(args);
+        if (args?.Length > 0) {
+            ProcessArgs(args.ToList());
         }
-        else
-        {
+        else {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
     }
 
-    private static void CLI(string[] Args)
-    {
+    private static void ProcessArgs(List<string> Args) {
         DllManager.LoadCead();
 
-        bool CompressMode = false;
+        string Infile = null;
+        string OutFile = null;
 
-        while (Args.Any())
-        {
-            var Entry = Args.First();
-            Args = Args.Skip(1).ToArray();
+        while (Args.Any()) {
+            string Entry = Args.First();
+            Args.RemoveAt(0);
 
             bool IsFlag = Entry.StartsWith('-') || Entry.StartsWith('/');
-            if (IsFlag)
-            {
+            if (IsFlag) {
                 var Flag = Entry.Substring(1).ToLower();
-                switch (Flag)
-                {
+                switch (Flag) {
                     case "x":
-                        CompressMode = false;
-                        break;
+                        string OutDecPath = OutFile ?? Path.Combine(Path.GetDirectoryName(Entry), Path.GetFileNameWithoutExtension(Entry));
+                        Decompress(Infile, OutDecPath);
+                        continue;
                     case "c":
-                        CompressMode = true;
-                        break;
+                        string OutCompPath = OutFile ?? Entry + ".zs";
+                        Compress(Infile, OutCompPath);
+                        continue;
+                    case "o":
+                        OutFile = Args.First();
+                        Args.RemoveAt(0);
+                        continue;
+                    case "i":
+                        Infile = Args.First();
+                        Args.RemoveAt(0);
+                        continue;
                 }
-                continue;
             }
 
-            if (File.Exists(Entry))
-            {
-                if (CompressMode)
-                {
-                    string OutPath = Entry + ".zs.new";
-                    var Data = ZStdHelper.Compress(Entry);
-                    File.WriteAllBytes(OutPath, Data.ToArray());
-                }
-                else
-                {
-                    string OutPath = Path.Combine(Path.GetDirectoryName(Entry), Path.GetFileNameWithoutExtension(Entry));
-                    var Data = ZStdHelper.Decompress(Entry);
-                    File.WriteAllBytes(OutPath, Data.ToArray());
-                }
+            if (File.Exists(Entry)) {
+                Infile = Entry;
             }
         }
+    }
+
+    public static void Compress(string InputPath, string OutputPath) {
+        if (InputPath == null || OutputPath == null) {
+            return;
+        }
+        var Data = ZStdHelper.Compress(InputPath);
+        File.WriteAllBytes(OutputPath, Data.ToArray());
+    }
+
+    public static void Decompress(string InputPath, string OutputPath) {
+        if (InputPath == null || OutputPath == null) {
+            return;
+        }
+        var Data = ZStdHelper.Decompress(InputPath);
+        File.WriteAllBytes(OutputPath, Data.ToArray());
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
