@@ -12,6 +12,8 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        DllManager.LoadCead();
+
         if (args.Length > 0) {
             CommandProcessor.Process(args.ToList());
         }

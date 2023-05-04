@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
-using Cead.Interop;
 using Totk.ZStdTool.ViewModels;
 using Totk.ZStdTool.Views;
 
@@ -21,8 +20,6 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        DllManager.LoadCead();
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
             desktop.MainWindow = new ShellView {
                 DataContext = ShellViewModel.Shared,
