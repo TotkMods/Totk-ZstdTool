@@ -33,7 +33,7 @@ internal class Program
 
             bool IsFlag = Entry.StartsWith('-') || Entry.StartsWith('/');
             if (IsFlag) {
-                var Flag = Entry.Substring(1).ToLower();
+                string Flag = Entry.Substring(1).ToLower();
                 switch (Flag) {
                     case "x":
                         string OutDecPath = OutFile ?? Path.Combine(Path.GetDirectoryName(Entry), Path.GetFileNameWithoutExtension(Entry));
@@ -64,7 +64,7 @@ internal class Program
         if (InputPath == null || OutputPath == null) {
             return;
         }
-        var Data = ZStdHelper.Compress(InputPath);
+        Span<byte> Data = ZStdHelper.Compress(InputPath);
         File.WriteAllBytes(OutputPath, Data.ToArray());
     }
 
@@ -72,7 +72,7 @@ internal class Program
         if (InputPath == null || OutputPath == null) {
             return;
         }
-        var Data = ZStdHelper.Decompress(InputPath);
+        Span<byte> Data = ZStdHelper.Decompress(InputPath);
         File.WriteAllBytes(OutputPath, Data.ToArray());
     }
 
