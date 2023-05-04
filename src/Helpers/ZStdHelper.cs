@@ -5,13 +5,6 @@ namespace Totk.ZStdTool.Helpers;
 
 public class ZStdHelper
 {
-    private enum DecompressorMode
-    {
-        Common,
-        Pack,
-        Map
-    }
-
     private static readonly string _zsDicPath = Path.Combine(App.Config.GamePath, "Pack", "ZsDic.pack.zs");
     private static readonly Decompressor _commonDecompressor = new();
     private static readonly Decompressor _mapDecompressor = new();
