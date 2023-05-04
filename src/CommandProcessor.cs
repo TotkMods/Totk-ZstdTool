@@ -61,6 +61,6 @@ public static class CommandProcessor
 
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         using FileStream fs = File.Create(output);
-        fs.Write(ZStdHelper.Compress(input));
+        fs.Write(ZStdHelper.Decompress(input));
     }
 }
