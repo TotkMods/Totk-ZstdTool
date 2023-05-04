@@ -19,12 +19,18 @@ A simple tool to decompress `.zs` files in Totk, compression support is also pla
 - Browse for a `.zs` file in your Totk game dump
 - Click `Decompress` and save the raw file to your computer
 
-## Usage (CLI)
-- To use the CLI tools you must first setup the game paths in the user-interface.
-- Decompress `Totk.ZStdTool.exe -i Something.bin.zs -o Something.bin -x`
-  - The -x flag must be the last argument.
-- Compress `Totk.ZStdTool.exe -i Something.bin -o Something.bin.zs -c`
-  - The -c flag must be the last argument.
+## Command Line Usage
+> **Notice:** To use the CLI tools you must first setup the game paths in the user interface
+
+- Decompress `d, decompress </path/file.bin.zs> [-o|--output OUTPUT]`<br>
+  ```
+  decompress F:\Bin\Totk\Bootup.pack.zs -o ./Bootup.pack
+  ```
+
+- Decompress `c, compress </path/file.bin> [-o|--output OUTPUT]`<br>
+  ```
+  compress F:\Bin\Totk\Bootup.pack -o ./Bootup.pack.zs
+  ```
 
 <br>
 
