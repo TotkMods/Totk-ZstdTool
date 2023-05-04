@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
 	<!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
@@ -9,6 +9,7 @@
 	<ImplicitUsings>enable</ImplicitUsings>
 	<DebugType>embedded</DebugType>
 	<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
