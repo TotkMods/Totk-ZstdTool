@@ -21,59 +21,62 @@ internal class Program
         }
     }
 
-    private static void ProcessArgs(List<string> Args) {
+    private static void ProcessArgs(List<string> args)
+    {
         DllManager.LoadCead();
 
-        string Infile = null;
-        string OutFile = null;
+        string? infile = null;
+        string? outFile = null;
 
-        while (Args.Any()) {
-            string Entry = Args.First();
-            Args.RemoveAt(0);
+        while (args.Any()) {
+            string entry = args.First();
+            args.RemoveAt(0);
 
-            bool IsFlag = Entry.StartsWith('-') || Entry.StartsWith('/');
-            if (IsFlag) {
-                string Flag = Entry.Substring(1).ToLower();
-                switch (Flag) {
+            bool isFlag = entry.StartsWith('-') || entry.StartsWith('/');
+            if (isFlag) {
+                string f = entry[1..].ToLower();
+                switch (f) {
                     case "x":
-                        string OutDecPath = OutFile ?? Path.Combine(Path.GetDirectoryName(Entry), Path.GetFileNameWithoutExtension(Entry));
-                        Decompress(Infile, OutDecPath);
+                        string outDecPath = outFile ?? Path.Combine(Path.GetDirectoryName(entry)!, Path.GetFileNameWithoutExtension(entry));
+                        Decompress(infile, outDecPath);
                         continue;
                     case "c":
-                        string OutCompPath = OutFile ?? Entry + ".zs";
-                        Compress(Infile, OutCompPath);
+                        string outCompPath = outFile ?? entry + ".zs";
+                        Compress(infile, outCompPath);
                         continue;
                     case "o":
-                        OutFile = Args.First();
-                        Args.RemoveAt(0);
+                        outFile = args.First();
+                        args.RemoveAt(0);
                         continue;
                     case "i":
-                        Infile = Args.First();
-                        Args.RemoveAt(0);
+                        infile = args.First();
+                        args.RemoveAt(0);
                         continue;
                 }
             }
 
-            if (File.Exists(Entry)) {
-                Infile = Entry;
+            if (File.Exists(entry)) {
+                infile = entry;
             }
         }
     }
 
-    public static void Compress(string InputPath, string OutputPath) {
-        if (InputPath == null || OutputPath == null) {
+    public static void Compress(string inputPath, string outputPath)
+    {
+        if (inputPath == null || outputPath == null) {
             return;
         }
-        Span<byte> Data = ZStdHelper.Compress(InputPath);
-        File.WriteAllBytes(OutputPath, Data.ToArray());
+        Span<byte> data = ZStdHelper.Compress(inputPath);
+        File.WriteAllBytes(outputPath, data.ToArray());
     }
 
-    public static void Decompress(string InputPath, string OutputPath) {
-        if (InputPath == null || OutputPath == null) {
+    public static void Decompress(string inputPath, string outputPath)
+    {
+        if (inputPath == null || outputPath == null) {
             return;
         }
-        Span<byte> Data = ZStdHelper.Decompress(InputPath);
-        File.WriteAllBytes(OutputPath, Data.ToArray());
+        Span<byte> data = ZStdHelper.Decompress(inputPath);
+        File.WriteAllBytes(outputPath, data.ToArray());
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
