@@ -9,6 +9,12 @@ public static class CommandProcessor
 
     public static void Process(List<string> args)
     {
+        if (File.Exists(args[0])) {
+            WindowHelper.SetWindowMode(WindowMode.Hidden);
+            ProcessShellInput(args[0]);
+            return;
+        }
+
         if (args[0].AsFlag() == 'h') {
             Console.WriteLine("""
                 Compress a file:
@@ -42,6 +48,16 @@ public static class CommandProcessor
     public static char AsFlag(this string input)
     {
         return input[input.LastIndexOf('-') + 1];
+    }
+
+    public static void ProcessShellInput(string input)
+    {
+        if (input.EndsWith(".zs")) {
+            Decompress(input, new());
+        }
+        else {
+            Compress(input, new());
+        }
     }
 
     public static void Compress(string input, Dictionary<char, string> flags)
