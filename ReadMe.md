@@ -1,8 +1,8 @@
-# Totk Decompression Tool
+# Totk Decompression/Compression Tool
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-A simple tool to decompress `.zs` files in Totk, compression support is also planned for the future
+A simple tool to decompress and compress `.zs` files in Totk.
 
 <img src="https://user-images.githubusercontent.com/80713508/235798842-421d9487-8bc1-47cd-920e-9a9f147bcf1f.png" width="500">
 
