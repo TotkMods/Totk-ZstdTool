@@ -27,7 +27,7 @@ A simple tool to decompress and compress `.zs` files in Totk.
   decompress F:\Bin\Totk\Bootup.pack.zs -o ./Bootup.pack
   ```
 
-- Decompress `c, compress </path/file.bin> [-o|--output OUTPUT]`<br>
+- Compress `c, compress </path/file.bin> [-o|--output OUTPUT]`<br>
   ```
   compress F:\Bin\Totk\Bootup.pack -o ./Bootup.pack.zs
   ```
