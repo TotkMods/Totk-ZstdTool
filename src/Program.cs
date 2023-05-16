@@ -18,7 +18,9 @@ internal class Program
             CommandProcessor.Process(args.ToList());
         }
         else {
+#if WIN_X64
             WindowHelper.SetWindowMode(WindowMode.Hidden);
+#endif
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
     }
