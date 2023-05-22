@@ -5,8 +5,9 @@ namespace Totk.ZStdTool;
 public class TotkConfig
 {
     private static readonly string _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Totk", "config.json");
-
     public required string GamePath { get; set; }
+    
+    public static string ZsDicPath => Path.Combine(App.Config.GamePath, "Pack", "ZsDic.pack.zs");
 
     public static TotkConfig Load()
     {

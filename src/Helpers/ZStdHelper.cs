@@ -5,7 +5,6 @@ namespace Totk.ZStdTool.Helpers;
 
 public class ZStdHelper
 {
-    private static readonly string _zsDicPath = Path.Combine(App.Config.GamePath, "Pack", "ZsDic.pack.zs");
     private static readonly Decompressor _commonDecompressor = new();
     private static readonly Decompressor _mapDecompressor = new();
     private static readonly Decompressor _packDecompressor = new();
@@ -15,7 +14,7 @@ public class ZStdHelper
 
     static ZStdHelper()
     {
-        Span<byte> data = _commonDecompressor.Unwrap(File.ReadAllBytes(_zsDicPath));
+        Span<byte> data = _commonDecompressor.Unwrap(File.ReadAllBytes(TotkConfig.ZsDicPath));
         using Sarc sarc = Sarc.FromBinary(data);
 
         _commonDecompressor.LoadDictionary(sarc["zs.zsdic"]);

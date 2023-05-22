@@ -66,6 +66,10 @@ public class ShellViewModel : ReactiveObject
 
     public async Task Decompress()
     {
+        if (!await CheckConfig()) {
+            return;
+        }
+
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Decompressed File", $"Raw File:*{Path.GetExtension(outputFile)}|Any File:*.*", outputFile, "save");
@@ -101,10 +105,17 @@ public class ShellViewModel : ReactiveObject
 
             await dlg.ShowAsync();
         }
+        finally {
+            StopLoading();
+        }
     }
 
     public async Task Compress()
     {
+        if (!await CheckConfig()) {
+            return;
+        }
+
         try {
             string outputFile = $"{Path.GetFileName(FilePath)}.zs";
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
@@ -135,10 +146,17 @@ public class ShellViewModel : ReactiveObject
 
             await dlg.ShowAsync();
         }
+        finally {
+            StopLoading();
+        }
     }
 
     public async Task DecompressFolder()
     {
+        if (!await CheckConfig()) {
+            return;
+        }
+
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
@@ -174,6 +192,10 @@ public class ShellViewModel : ReactiveObject
 
     public async Task CompressFolder()
     {
+        if (!await CheckConfig()) {
+            return;
+        }
+
         try {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
@@ -235,6 +257,26 @@ public class ShellViewModel : ReactiveObject
             App.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
             App.Config.Save();
         }
+    }
+
+    public async Task<bool> CheckConfig()
+    {
+        if (File.Exists(TotkConfig.ZsDicPath)) {
+            return true;
+        }
+
+        ContentDialog dialog = new() {
+            Content = new HyperlinkButton {
+                MaxHeight = 250,
+                Content = "Please read the documentation for help",
+                NavigateUri = new Uri("https://github.com/TotkMods/Totk.ZStdTool#setup")
+            },
+            PrimaryButtonText = "OK",
+            Title = "Invalid Game Path"
+        };
+
+        await dialog.ShowAsync();
+        return false;
     }
 
     //
