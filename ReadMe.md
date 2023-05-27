@@ -18,7 +18,7 @@ A simple tool for decompressing and compressing `.zs` files in Totk.
 1. Download and install the .NET 7 Runtime.
 2. Download the latest release of [Totk zStd Tool](https://github.com/TotkMods/Totk.ZStdTool/releases/latest).
 3. Open the application and configure your settings:
-   - **Game Path**: Specify the path to your Totk game dump. This field is required.
+   - **Game Path**: Specify the path to your Totk game dump (RomFS - not an XCI or NSP file). This field is required.
 
 ## Usage
 
