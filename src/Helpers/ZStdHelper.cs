@@ -5,9 +5,11 @@ namespace Totk.ZStdTool.Helpers;
 
 public class ZStdHelper
 {
+    private static readonly Decompressor _defaultDecompressor = new();
     private static readonly Decompressor _commonDecompressor = new();
     private static readonly Decompressor _mapDecompressor = new();
     private static readonly Decompressor _packDecompressor = new();
+    private static readonly Compressor _defaultCompressor = new(16);
     private static readonly Compressor _commonCompressor = new(16);
     private static readonly Compressor _mapCompressor = new(16);
     private static readonly Compressor _packCompressor = new(16);
@@ -32,6 +34,7 @@ public class ZStdHelper
         return
             file.EndsWith(".bcett.byml.zs") ? _mapDecompressor.Unwrap(src) :
             file.EndsWith(".pack.zs") ? _packDecompressor.Unwrap(src) :
+            file.EndsWith(".rsizetable.zs") ? _defaultDecompressor.Unwrap(src) :
             _commonDecompressor.Unwrap(src);
     }
     public static Span<byte> Compress(string file)
@@ -40,6 +43,7 @@ public class ZStdHelper
         return
             file.EndsWith(".bcett.byml") ? _mapCompressor.Wrap(src) :
             file.EndsWith(".pack") ? _packCompressor.Wrap(src) :
+            file.EndsWith(".rsizetable") ? _defaultCompressor.Wrap(src) :
             _commonCompressor.Wrap(src);
     }
 
