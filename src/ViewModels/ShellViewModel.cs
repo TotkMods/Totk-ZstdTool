@@ -21,6 +21,7 @@ public class ShellViewModel : ReactiveObject
 
     private bool _canDecompress = false;
     public bool CanDecompress => _canDecompress;
+
     private bool _canCompress = false;
     public bool CanCompress => _canCompress;
 
@@ -42,8 +43,17 @@ public class ShellViewModel : ReactiveObject
 
     private bool _canDecompressFolder;
     public bool CanDecompressFolder => _canDecompressFolder;
+
     private bool _canCompressFolder;
     public bool CanCompressFolder => _canCompressFolder;
+
+    private bool _useDictionaries = true;
+    public bool UseDictionaries {
+        get => _useDictionaries;
+        set {
+            this.RaiseAndSetIfChanged(ref _useDictionaries, value);
+        }
+    }
 
     public async Task Browse(object param)
     {
@@ -121,7 +131,7 @@ public class ShellViewModel : ReactiveObject
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
             if (await dialog.ShowDialog() is string path) {
                 using FileStream fs = File.Create(path);
-                fs.Write(ZStdHelper.Compress(FilePath));
+                fs.Write(ZStdHelper.Compress(FilePath, UseDictionaries));
 
                 ContentDialog dlg = new() {
                     Content = $"File compressed to '{path}'",
@@ -201,7 +211,7 @@ public class ShellViewModel : ReactiveObject
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
             if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
                 StartLoading();
-                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
+                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount, UseDictionaries));
 
                 ContentDialog dlg = new() {
                     Content = $"Folder compressed to '{path}'",

@@ -72,8 +72,11 @@
                     <CheckBox Content="De/Compress Folder Recursively" IsChecked="{Binding DecompressRecursive}" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        Spacing="10">
                 <Button Command="{Binding ShowSettings}" Content="Settings" />
+                <CheckBox Content="Compress with dictionaries" IsChecked="{Binding UseDictionaries}" />
             </StackPanel>
         </Grid>
         <Border Background="Black"

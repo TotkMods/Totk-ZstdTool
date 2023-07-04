@@ -37,10 +37,11 @@ public class ZStdHelper
             file.EndsWith(".rsizetable.zs") ? _defaultDecompressor.Unwrap(src) :
             _commonDecompressor.Unwrap(src);
     }
-    public static Span<byte> Compress(string file)
+    public static Span<byte> Compress(string file, bool useDictionaries)
     {
         Span<byte> src = File.ReadAllBytes(file);
         return
+            !useDictionaries ? _defaultCompressor.Wrap(src) :
             file.EndsWith(".bcett.byml") ? _mapCompressor.Wrap(src) :
             file.EndsWith(".pack") ? _packCompressor.Wrap(src) :
             file.EndsWith(".rsizetable") ? _defaultCompressor.Wrap(src) :
@@ -65,7 +66,7 @@ public class ZStdHelper
         }
     }
 
-    public static void CompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null)
+    public static void CompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null, bool useDictionaries = true)
     {
         string[] files = Directory.EnumerateFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
             .Where(path => Path.GetExtension(path) != ".zs" && Path.GetFileName(path) != "ZsDic.pack")
@@ -74,7 +75,7 @@ public class ZStdHelper
 
         for (int i = 0; i < files.Length; i++) {
             string file = files[i];
-            Span<byte> data = Compress(file);
+            Span<byte> data = Compress(file, useDictionaries);
 
             string outputFile = Path.Combine(output, Path.GetRelativePath(path, $"{file}.zs"));
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
