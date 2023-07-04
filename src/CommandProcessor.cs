@@ -9,12 +9,16 @@ public static class CommandProcessor
 
     public static void Process(List<string> args)
     {
-        if (File.Exists(args[0])) {
+        string[] files = args.Where(File.Exists).ToArray();
+        if (files.Length == args.Count) {
             WindowHelper.SetWindowMode(WindowMode.Hidden);
-            ProcessShellInput(args[0]);
+            foreach (string file in files) {
+                ProcessShellInput(file);
+            }
+
             return;
         }
-
+        
         if (args[0].AsFlag() == 'h') {
             Console.WriteLine("""
                 Compress a file:
