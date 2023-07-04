@@ -52,4 +52,4 @@ jobs:
         with:
           name: zStdTool${{ matrix.config.ext }}
           path: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
-          repo-token: ~
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
