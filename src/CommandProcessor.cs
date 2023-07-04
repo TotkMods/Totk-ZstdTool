@@ -11,7 +11,6 @@ public static class CommandProcessor
     {
         string[] files = args.Where(File.Exists).ToArray();
         if (files.Length == args.Count) {
-            WindowHelper.SetWindowMode(WindowMode.Hidden);
             foreach (string file in files) {
                 ProcessShellInput(file);
             }
