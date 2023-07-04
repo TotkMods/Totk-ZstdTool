@@ -1,4 +1,4 @@
-﻿using Cead;
+﻿using SarcLibrary;
 using ZstdSharp;
 
 namespace Totk.ZStdTool.Helpers;
@@ -17,7 +17,7 @@ public class ZStdHelper
     static ZStdHelper()
     {
         Span<byte> data = _commonDecompressor.Unwrap(File.ReadAllBytes(TotkConfig.ZsDicPath));
-        using Sarc sarc = Sarc.FromBinary(data);
+        SarcFile sarc = SarcFile.FromBinary(data.ToArray());
 
         _commonDecompressor.LoadDictionary(sarc["zs.zsdic"]);
         _mapDecompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);

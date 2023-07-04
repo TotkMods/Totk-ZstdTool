@@ -34,10 +34,8 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview7" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview7" />
     <PackageReference Include="FluentAvaloniaUI" Version="2.0.0-preview7" />
+    <PackageReference Include="SarcLibrary" Version="2.0.2" />
     <PackageReference Include="ZstdSharp.Port" Version="0.7.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lib\Cead\src\Cead.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="ReactiveUI" />

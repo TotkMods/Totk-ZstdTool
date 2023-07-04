@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
-using Cead.Interop;
 
 namespace Totk.ZStdTool;
 
@@ -12,8 +11,6 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        DllManager.LoadCead();
-
         if (args.Length > 0) {
             CommandProcessor.Process(args.ToList());
         }

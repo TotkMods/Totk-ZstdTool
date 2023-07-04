@@ -5,10 +5,6 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Totk.ZStdTool", "src\Totk.ZStdTool.csproj", "{82E909E6-EDF7-4C14-9F71-4CB1C95467D2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D14822C2-1D12-49D3-A4A5-BABDDD344A1F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cead", "lib\Cead\src\Cead.csproj", "{DE4302A7-52AA-428B-B9E9-80972435998E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,16 +15,9 @@ Global
 		{82E909E6-EDF7-4C14-9F71-4CB1C95467D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82E909E6-EDF7-4C14-9F71-4CB1C95467D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82E909E6-EDF7-4C14-9F71-4CB1C95467D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE4302A7-52AA-428B-B9E9-80972435998E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE4302A7-52AA-428B-B9E9-80972435998E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE4302A7-52AA-428B-B9E9-80972435998E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE4302A7-52AA-428B-B9E9-80972435998E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DE4302A7-52AA-428B-B9E9-80972435998E} = {D14822C2-1D12-49D3-A4A5-BABDDD344A1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C991AA9-DCD8-435F-8DEC-DB833B7B9CED}
