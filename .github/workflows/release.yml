@@ -50,6 +50,6 @@ jobs:
       - name: Upload artifacts
         uses: Shopify/upload-to-release@v1.0.1
         with:
-          name: zStdTool${{ matrix.config.ext }}
+          name: zstd-tool${{ matrix.config.ext }}
           path: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
