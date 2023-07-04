@@ -69,9 +69,14 @@ public static class CommandProcessor
         flags.TryGetValue('o', out string? output);
         output ??= input + ".zs";
 
+        bool useDictionaries = true;
+        if (flags.TryGetValue('d', out string? useDictionariesArg)) {
+            useDictionaries = useDictionariesArg.ToLower() is not "f" or "false" or "n" or "no";
+        }
+
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         using FileStream fs = File.Create(output);
-        fs.Write(ZStdHelper.Compress(input, useDictionaries: flags.ContainsKey('d')));
+        fs.Write(ZStdHelper.Compress(input, useDictionaries));
     }
 
     public static void Decompress(string input, Dictionary<char, string> flags)
