@@ -18,7 +18,7 @@ public static class CommandProcessor
         if (args[0].AsFlag() == 'h') {
             Console.WriteLine("""
                 Compress a file:
-                    c, compress <file-path> [-o|--output] [-h|--help]
+                    c, compress <file-path> [-o|--output] [-d|--dictionaries] [-h|--help]
 
                 Decompress a file:
                     d, decompress <file-path> [-o|--output] [-h|--help]
@@ -67,7 +67,7 @@ public static class CommandProcessor
 
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         using FileStream fs = File.Create(output);
-        fs.Write(ZStdHelper.Compress(input));
+        fs.Write(ZStdHelper.Compress(input, useDictionaries: flags.ContainsKey('d')));
     }
 
     public static void Decompress(string input, Dictionary<char, string> flags)
