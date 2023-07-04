@@ -73,7 +73,10 @@ public static class CommandProcessor
             useDictionaries = useDictionariesArg.ToLower() is not "f" or "false" or "n" or "no";
         }
 
-        Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory)) {
+            Directory.CreateDirectory(directory);
+        }
+
         using FileStream fs = File.Create(output);
         fs.Write(ZStdHelper.Compress(input, useDictionaries));
     }
@@ -83,7 +86,10 @@ public static class CommandProcessor
         flags.TryGetValue('o', out string? output);
         output ??= Path.ChangeExtension(input, string.Empty);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory)) {
+            Directory.CreateDirectory(directory);
+        }
+
         using FileStream fs = File.Create(output);
         fs.Write(ZStdHelper.Decompress(input));
     }
