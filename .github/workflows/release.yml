@@ -10,57 +10,23 @@ jobs:
     name: Build ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         config:
           - name: Linux
             os: ubuntu-latest
-            ext: ""
+            ext: ~
             runtime: linux-x64
-            build: linux
-            vars: CXX="g++"
-            setup: |
-              sudo apt-get update
-              sudo apt-get install ninja-build cmake
-              ninja --version
-              cmake --version
-              gcc --version
           - name: Windows
             os: windows-latest
             ext: .exe
             runtime: win-x64
-            setup: |
-              choco install ninja cmake
-              ninja --version
-              cmake --version
 
     env:
       proj: "Totk.ZStdTool"
 
     steps:
       - uses: actions/checkout@master
-        with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        run: ${{ matrix.config.setup }}
-
-      - name: Configure Cead (native)
-        shell: bash
-        run: |
-          mkdir ./lib/Cead/native/build
-          ${{ matrix.config.vars }} \
-          cmake --no-warn-unused-cli \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE \
-            -DCMAKE_BUILD_TYPE:STRING=Release \
-            -S ./lib/Cead/native \
-            -B ./lib/Cead/native/build/${{ matrix.config.build }} \
-            -G "Ninja"
-
-      - name: Build Cead (native)
-        shell: bash
-        run: |
-          cmake --build ./lib/Cead/native/build/${{ matrix.config.build }} --config Release --target all -j 4
 
       - name: Install DotNET
         uses: actions/setup-dotnet@v3
@@ -84,6 +50,6 @@ jobs:
       - name: Upload artifacts
         uses: Shopify/upload-to-release@v1.0.1
         with:
-          name: ZSTD-Tool-${{ github.event.release.tag_name }}${{ matrix.config.ext }}
+          name: zStdTool${{ matrix.config.ext }}
           path: ${{ matrix.config.name }}/${{ env.proj }}${{ matrix.config.ext }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ~
