@@ -1,9 +1,9 @@
 # Totk Decompression/Compression Tool
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Downloads](https://img.shields.io/github/downloads/TotkMods/TotkZstdTool/total)](https://github.com/TotkMods/TotkZstdTool/releases)
+[![Downloads](https://img.shields.io/github/downloads/TotkMods/Totk-ZstdTool/total)](https://github.com/TotkMods/Totk-ZstdTool/releases)
 
-A simple tool for decompressing and compressing `.zs` files in Totk.
+A simple tool for decompressing and compressing `.zs` files in TotK.
 
 <img src="https://user-images.githubusercontent.com/80713508/235798842-421d9487-8bc1-47cd-920e-9a9f147bcf1f.png" width="500">
 
@@ -17,8 +17,8 @@ A simple tool for decompressing and compressing `.zs` files in Totk.
 
 ## Setup
 
-1. Download and install the .NET 7 Runtime.
-2. Download the latest release of [Totk zStd Tool](https://github.com/TotkMods/TotkZstdTool/releases/latest).
+1. Download and install the .NET 8 Runtime.
+2. Download the latest release of [Totk zStd Tool](https://github.com/TotkMods/Totk-ZstdTool/releases/latest).
 3. Open the application and configure your settings:
    - **Game Path**: Specify the path to your Totk game dump (RomFS - not an XCI or NSP file). This field is required.
 
@@ -51,4 +51,4 @@ To use the Totk Decompression/Compression Tool, follow these steps:
 
 This project is licensed under the [AGPL v3 License](https://www.gnu.org/licenses/agpl-3.0).
 
-&copy; Arch Leaders - 2023
+&copy; Arch Leaders, 2023-2024
