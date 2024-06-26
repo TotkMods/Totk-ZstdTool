@@ -1,51 +1,58 @@
-﻿using SarcLibrary;
-using ZstdSharp;
+﻿using CommunityToolkit.HighPerformance.Buffers;
+using TotkCommon;
 
 namespace Totk.ZStdTool.Helpers;
 
-public class ZStdHelper
+public static class ZstdHelper
 {
-    private static readonly Decompressor _defaultDecompressor = new();
-    private static readonly Decompressor _commonDecompressor = new();
-    private static readonly Decompressor _mapDecompressor = new();
-    private static readonly Decompressor _packDecompressor = new();
-    private static readonly Compressor _defaultCompressor = new(16);
-    private static readonly Compressor _commonCompressor = new(16);
-    private static readonly Compressor _mapCompressor = new(16);
-    private static readonly Compressor _packCompressor = new(16);
-
-    static ZStdHelper()
+    public static int GetDictioanryId(this string path, bool useDictionaries)
     {
-        Span<byte> data = _commonDecompressor.Unwrap(File.ReadAllBytes(TotkConfig.ZsDicPath));
-        SarcFile sarc = SarcFile.FromBinary(data.ToArray());
-
-        _commonDecompressor.LoadDictionary(sarc["zs.zsdic"]);
-        _mapDecompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
-        _packDecompressor.LoadDictionary(sarc["pack.zsdic"]);
-
-        _commonCompressor.LoadDictionary(sarc["zs.zsdic"]);
-        _mapCompressor.LoadDictionary(sarc["bcett.byml.zsdic"]);
-        _packCompressor.LoadDictionary(sarc["pack.zsdic"]);
+        return useDictionaries switch {
+            false => -1,
+            true => path.EndsWith(".rsizetable") || path.EndsWith("ZsDic.pack") ? -1 :
+                    path.EndsWith(".bcett.byml") ? 3 :
+                    path.EndsWith(".pack") ? 2 : 1
+        };
     }
 
-    public static Span<byte> Decompress(string file)
+    public static void Decompress(string file, string output)
     {
-        Span<byte> src = File.ReadAllBytes(file);
-        return
-            file.EndsWith(".bcett.byml.zs") ? _mapDecompressor.Unwrap(src) :
-            file.EndsWith(".pack.zs") ? _packDecompressor.Unwrap(src) :
-            file.EndsWith(".rsizetable.zs") ? _defaultDecompressor.Unwrap(src) :
-            _commonDecompressor.Unwrap(src);
+        using SpanOwner<byte> decompressed = Decompress(file);
+        using FileStream fs = File.Create(output);
+        fs.Write(decompressed.Span);
     }
-    public static Span<byte> Compress(string file, bool useDictionaries)
+
+    public static SpanOwner<byte> Decompress(string file)
     {
-        Span<byte> src = File.ReadAllBytes(file);
-        return
-            !useDictionaries ? _defaultCompressor.Wrap(src) :
-            file.EndsWith(".bcett.byml") ? _mapCompressor.Wrap(src) :
-            file.EndsWith(".pack") ? _packCompressor.Wrap(src) :
-            file.EndsWith(".rsizetable") ? _defaultCompressor.Wrap(src) :
-            _commonCompressor.Wrap(src);
+        using FileStream fs = File.OpenRead(file);
+        int size = Convert.ToInt32(fs.Length);
+        using SpanOwner<byte> buffer = SpanOwner<byte>.Allocate(size);
+        fs.Read(buffer.Span);
+
+        size = Zstd.GetDecompressedSize(buffer.Span);
+        SpanOwner<byte> decompressed = SpanOwner<byte>.Allocate(size);
+        TotkCommon.Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
+        return decompressed;
+    }
+
+    public static void Compress(string file, string output, bool useDictionaries)
+    {
+        using SpanOwner<byte> compressed = Compress(file, useDictionaries);
+        using FileStream fs = File.Create(output);
+        fs.Write(compressed.Span);
+    }
+
+    public static SpanOwner<byte> Compress(string file, bool useDictionaries)
+    {
+        using FileStream fs = File.OpenRead(file);
+        int size = Convert.ToInt32(fs.Length);
+        using SpanOwner<byte> buffer = SpanOwner<byte>.Allocate(size);
+        fs.Read(buffer.Span);
+
+        size = Zstd.GetDecompressedSize(buffer.Span);
+        SpanOwner<byte> decompressed = SpanOwner<byte>.Allocate(size);
+        TotkCommon.Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
+        return decompressed;
     }
 
     public static void DecompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null)
@@ -54,13 +61,13 @@ public class ZStdHelper
         setCount?.Invoke(files.Length);
 
         for (int i = 0; i < files.Length; i++) {
-            var file = files[i];
-            Span<byte> data = Decompress(file);
+            string file = files[i];
+            using SpanOwner<byte> data = Decompress(file);
 
             string outputFile = Path.Combine(output, Path.GetRelativePath(path, file.Remove(file.Length - 3, 3)));
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
             using FileStream fs = File.Create(outputFile);
-            fs.Write(data);
+            fs.Write(data.Span);
 
             updateCount?.Invoke(i + 1);
         }
@@ -68,19 +75,17 @@ public class ZStdHelper
 
     public static void CompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null, bool useDictionaries = true)
     {
-        string[] files = Directory.EnumerateFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-            .Where(path => Path.GetExtension(path) != ".zs" && Path.GetFileName(path) != "ZsDic.pack")
-            .ToArray();
+        string[] files = Directory.GetFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         setCount?.Invoke(files.Length);
 
         for (int i = 0; i < files.Length; i++) {
             string file = files[i];
-            Span<byte> data = Compress(file, useDictionaries);
+            using SpanOwner<byte> data = Compress(file, useDictionaries);
 
             string outputFile = Path.Combine(output, Path.GetRelativePath(path, $"{file}.zs"));
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
             using FileStream fs = File.Create(outputFile);
-            fs.Write(data);
+            fs.Write(data.Span);
 
             updateCount?.Invoke(i + 1);
         }

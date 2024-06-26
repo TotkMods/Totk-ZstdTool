@@ -86,8 +86,7 @@ public class ShellViewModel : ReactiveObject
             if (await dialog.ShowDialog() is string path) {
                 StartLoading(1);
 
-                using FileStream fs = File.Create(path);
-                fs.Write(ZStdHelper.Decompress(FilePath));
+                ZstdHelper.Decompress(FilePath, path);
 
                 UpdateCount(1);
 
@@ -130,8 +129,7 @@ public class ShellViewModel : ReactiveObject
             string outputFile = $"{Path.GetFileName(FilePath)}.zs";
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
             if (await dialog.ShowDialog() is string path) {
-                using FileStream fs = File.Create(path);
-                fs.Write(ZStdHelper.Compress(FilePath, UseDictionaries));
+                ZstdHelper.Compress(FilePath, path, UseDictionaries);
 
                 ContentDialog dlg = new() {
                     Content = $"File compressed to '{path}'",
@@ -172,7 +170,7 @@ public class ShellViewModel : ReactiveObject
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
             if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
                 StartLoading();
-                await Task.Run(() => ZStdHelper.DecompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
+                await Task.Run(() => ZstdHelper.DecompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
 
                 ContentDialog dlg = new() {
                     Content = $"Folder Decompressed to '{path}'",
@@ -211,7 +209,7 @@ public class ShellViewModel : ReactiveObject
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
             if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
                 StartLoading();
-                await Task.Run(() => ZStdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount, UseDictionaries));
+                await Task.Run(() => ZstdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount, UseDictionaries));
 
                 ContentDialog dlg = new() {
                     Content = $"Folder compressed to '{path}'",
@@ -249,7 +247,7 @@ public class ShellViewModel : ReactiveObject
                     Spacing = 10,
                     Children = {
                         new TextBox {
-                            Text = App.Config.GamePath,
+                            Text = TotkCommon.Totk.Config.GamePath,
                             Watermark = "Game Path",
                             UseFloatingWatermark = true,
                         },
@@ -264,14 +262,14 @@ public class ShellViewModel : ReactiveObject
 
         if (await dlg.ShowAsync() == ContentDialogResult.Primary) {
             var stack = (dlg.Content as ScrollViewer)!.Content as StackPanel;
-            App.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
-            App.Config.Save();
+            TotkCommon.Totk.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
+            TotkCommon.Totk.Config.Save();
         }
     }
 
-    public async Task<bool> CheckConfig()
+    public static async Task<bool> CheckConfig()
     {
-        if (File.Exists(TotkConfig.ZsDicPath)) {
+        if (File.Exists(TotkCommon.Totk.Config.ZsDicPath)) {
             return true;
         }
 

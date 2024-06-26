@@ -10,7 +10,6 @@ namespace Totk.ZStdTool;
 
 public partial class App : Application
 {
-    public static TotkConfig Config { get; } = TotkConfig.Load();
     public static TopLevel? VisualRoot { get; private set; }
 
     public override void Initialize()

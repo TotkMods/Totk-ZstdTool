@@ -77,8 +77,7 @@ public static class CommandProcessor
             Directory.CreateDirectory(directory);
         }
 
-        using FileStream fs = File.Create(output);
-        fs.Write(ZStdHelper.Compress(input, useDictionaries));
+        ZstdHelper.Compress(input, output, useDictionaries);
     }
 
     public static void Decompress(string input, Dictionary<char, string> flags)
@@ -90,7 +89,6 @@ public static class CommandProcessor
             Directory.CreateDirectory(directory);
         }
 
-        using FileStream fs = File.Create(output);
-        fs.Write(ZStdHelper.Decompress(input));
+        ZstdHelper.Decompress(input, output);
     }
 }
