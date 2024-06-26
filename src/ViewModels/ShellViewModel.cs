@@ -1,18 +1,20 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
-using Totk.ZStdTool.Helpers;
+using TotkZstdTool.Helpers;
 
-namespace Totk.ZStdTool.ViewModels;
+namespace TotkZstdTool.ViewModels;
 
 public class ShellViewModel : ReactiveObject
 {
     public static ShellViewModel Shared { get; } = new();
 
     private string _filePath = string.Empty;
-    public string FilePath {
+    public string FilePath
+    {
         get => _filePath;
-        set {
+        set
+        {
             this.RaiseAndSetIfChanged(ref _filePath, value);
             this.RaiseAndSetIfChanged(ref _canDecompress, File.Exists(value) && Path.GetExtension(value) == ".zs", nameof(CanDecompress));
             this.RaiseAndSetIfChanged(ref _canCompress, File.Exists(value) && Path.GetExtension(value) != ".zs", nameof(CanCompress));
@@ -26,15 +28,18 @@ public class ShellViewModel : ReactiveObject
     public bool CanCompress => _canCompress;
 
     private bool _decompressRecursive = true;
-    public bool DecompressRecursive {
+    public bool DecompressRecursive
+    {
         get => _decompressRecursive;
         set => this.RaiseAndSetIfChanged(ref _decompressRecursive, value);
     }
 
     private string _folderPath = string.Empty;
-    public string FolderPath {
+    public string FolderPath
+    {
         get => _folderPath;
-        set {
+        set
+        {
             this.RaiseAndSetIfChanged(ref _folderPath, value);
             this.RaiseAndSetIfChanged(ref _canDecompressFolder, Directory.Exists(value), nameof(CanDecompressFolder));
             this.RaiseAndSetIfChanged(ref _canCompressFolder, Directory.Exists(value), nameof(CanCompressFolder));
@@ -48,9 +53,11 @@ public class ShellViewModel : ReactiveObject
     public bool CanCompressFolder => _canCompressFolder;
 
     private bool _useDictionaries = true;
-    public bool UseDictionaries {
+    public bool UseDictionaries
+    {
         get => _useDictionaries;
-        set {
+        set
+        {
             this.RaiseAndSetIfChanged(ref _useDictionaries, value);
         }
     }
@@ -58,15 +65,19 @@ public class ShellViewModel : ReactiveObject
     public async Task Browse(object param)
     {
         var mode = param as string;
-        if (mode == "File") {
+        if (mode == "File")
+        {
             BrowserDialog dialog = new(BrowserMode.OpenFile, "Open zStd File", "zStd Files:*.zs|Any File:*.*", instanceBrowserKey: "load");
-            if (await dialog.ShowDialog() is string path) {
+            if (await dialog.ShowDialog() is string path)
+            {
                 FilePath = path;
             }
         }
-        else if (mode == "Folder") {
+        else if (mode == "Folder")
+        {
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Open Folder", instanceBrowserKey: "load-fld");
-            if (await dialog.ShowDialog() is string path) {
+            if (await dialog.ShowDialog() is string path)
+            {
                 FolderPath = path;
             }
         }
@@ -76,21 +87,25 @@ public class ShellViewModel : ReactiveObject
 
     public async Task Decompress()
     {
-        if (!await CheckConfig()) {
+        if (!await CheckConfig())
+        {
             return;
         }
 
-        try {
+        try
+        {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Decompressed File", $"Raw File:*{Path.GetExtension(outputFile)}|Any File:*.*", outputFile, "save");
-            if (await dialog.ShowDialog() is string path) {
+            if (await dialog.ShowDialog() is string path)
+            {
                 StartLoading(1);
 
                 ZstdHelper.Decompress(FilePath, path);
 
                 UpdateCount(1);
 
-                ContentDialog dlg = new() {
+                ContentDialog dlg = new()
+                {
                     Content = $"File Decompressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
@@ -101,9 +116,12 @@ public class ShellViewModel : ReactiveObject
                 StopLoading();
             }
         }
-        catch (Exception ex) {
-            ContentDialog dlg = new() {
-                Content = new TextBox {
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Content = new TextBox
+                {
                     MaxHeight = 250,
                     Text = ex.ToString(),
                     IsReadOnly = true,
@@ -114,24 +132,29 @@ public class ShellViewModel : ReactiveObject
 
             await dlg.ShowAsync();
         }
-        finally {
+        finally
+        {
             StopLoading();
         }
     }
 
     public async Task Compress()
     {
-        if (!await CheckConfig()) {
+        if (!await CheckConfig())
+        {
             return;
         }
 
-        try {
+        try
+        {
             string outputFile = $"{Path.GetFileName(FilePath)}.zs";
             BrowserDialog dialog = new(BrowserMode.SaveFile, "Save Compressed File", $"Zstd Compressed File:*.zs|Any File:*.*", outputFile, "save");
-            if (await dialog.ShowDialog() is string path) {
+            if (await dialog.ShowDialog() is string path)
+            {
                 ZstdHelper.Compress(FilePath, path, UseDictionaries);
 
-                ContentDialog dlg = new() {
+                ContentDialog dlg = new()
+                {
                     Content = $"File compressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
@@ -141,9 +164,12 @@ public class ShellViewModel : ReactiveObject
                 await dlg.ShowAsync();
             }
         }
-        catch (Exception ex) {
-            ContentDialog dlg = new() {
-                Content = new TextBox {
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Content = new TextBox
+                {
                     MaxHeight = 250,
                     Text = ex.ToString(),
                     IsReadOnly = true,
@@ -154,25 +180,30 @@ public class ShellViewModel : ReactiveObject
 
             await dlg.ShowAsync();
         }
-        finally {
+        finally
+        {
             StopLoading();
         }
     }
 
     public async Task DecompressFolder()
     {
-        if (!await CheckConfig()) {
+        if (!await CheckConfig())
+        {
             return;
         }
 
-        try {
+        try
+        {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
-            if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path))
+            {
                 StartLoading();
                 await Task.Run(() => ZstdHelper.DecompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount));
 
-                ContentDialog dlg = new() {
+                ContentDialog dlg = new()
+                {
                     Content = $"Folder Decompressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
@@ -183,9 +214,12 @@ public class ShellViewModel : ReactiveObject
                 StopLoading();
             }
         }
-        catch (Exception ex) {
-            ContentDialog dlg = new() {
-                Content = new TextBox {
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Content = new TextBox
+                {
                     MaxHeight = 250,
                     Text = ex.ToString(),
                     IsReadOnly = true,
@@ -200,18 +234,22 @@ public class ShellViewModel : ReactiveObject
 
     public async Task CompressFolder()
     {
-        if (!await CheckConfig()) {
+        if (!await CheckConfig())
+        {
             return;
         }
 
-        try {
+        try
+        {
             string outputFile = Path.GetFileNameWithoutExtension(FilePath);
             BrowserDialog dialog = new(BrowserMode.OpenFolder, "Output Folder", "save-fld");
-            if (await dialog.ShowDialog() is string path && Directory.Exists(path)) {
+            if (await dialog.ShowDialog() is string path && Directory.Exists(path))
+            {
                 StartLoading();
                 await Task.Run(() => ZstdHelper.CompressFolder(FolderPath, path, DecompressRecursive, SetCount, UpdateCount, UseDictionaries));
 
-                ContentDialog dlg = new() {
+                ContentDialog dlg = new()
+                {
                     Content = $"Folder compressed to '{path}'",
                     DefaultButton = ContentDialogButton.Primary,
                     PrimaryButtonText = "Close",
@@ -222,9 +260,12 @@ public class ShellViewModel : ReactiveObject
                 StopLoading();
             }
         }
-        catch (Exception ex) {
-            ContentDialog dlg = new() {
-                Content = new TextBox {
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Content = new TextBox
+                {
                     MaxHeight = 250,
                     Text = ex.ToString(),
                     IsReadOnly = true,
@@ -239,10 +280,13 @@ public class ShellViewModel : ReactiveObject
 
     public static async Task ShowSettings()
     {
-        ContentDialog dlg = new() {
-            Content = new ScrollViewer {
+        ContentDialog dlg = new()
+        {
+            Content = new ScrollViewer
+            {
                 MaxHeight = 250,
-                Content = new StackPanel {
+                Content = new StackPanel
+                {
                     Margin = new(0, 0, 15, 0),
                     Spacing = 10,
                     Children = {
@@ -260,7 +304,8 @@ public class ShellViewModel : ReactiveObject
             Title = "Settings"
         };
 
-        if (await dlg.ShowAsync() == ContentDialogResult.Primary) {
+        if (await dlg.ShowAsync() == ContentDialogResult.Primary)
+        {
             var stack = (dlg.Content as ScrollViewer)!.Content as StackPanel;
             TotkCommon.Totk.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
             TotkCommon.Totk.Config.Save();
@@ -269,15 +314,18 @@ public class ShellViewModel : ReactiveObject
 
     public static async Task<bool> CheckConfig()
     {
-        if (File.Exists(TotkCommon.Totk.Config.ZsDicPath)) {
+        if (File.Exists(TotkCommon.Totk.Config.ZsDicPath))
+        {
             return true;
         }
 
-        ContentDialog dialog = new() {
-            Content = new HyperlinkButton {
+        ContentDialog dialog = new()
+        {
+            Content = new HyperlinkButton
+            {
                 MaxHeight = 250,
                 Content = "Please read the documentation for help",
-                NavigateUri = new Uri("https://github.com/TotkMods/Totk.ZStdTool#setup")
+                NavigateUri = new Uri("https://github.com/TotkMods/TotkZstdTool#setup")
             },
             PrimaryButtonText = "OK",
             Title = "Invalid Game Path"
@@ -290,32 +338,37 @@ public class ShellViewModel : ReactiveObject
     //
     // Loading stuff
 
-    private readonly DispatcherTimer _timer = new() {
+    private readonly DispatcherTimer _timer = new()
+    {
         Interval = new(0, 0, 0, 0, 500),
     };
 
     public ShellViewModel()
     {
-        _timer.Tick += (s, e) => {
+        _timer.Tick += (s, e) =>
+        {
             LoadingDots += " .";
             LoadingDots = LoadingDots.Replace(" . . . . .", " .");
         };
     }
 
     private bool _isLoading = false;
-    public bool IsLoading {
+    public bool IsLoading
+    {
         get => _isLoading;
         set => this.RaiseAndSetIfChanged(ref _isLoading, value);
     }
 
     private string _loadingDots = " . . . .";
-    public string LoadingDots {
+    public string LoadingDots
+    {
         get => _loadingDots;
         set => this.RaiseAndSetIfChanged(ref _loadingDots, value);
     }
 
     private string _processCount = "-/-";
-    public string ProcessCount {
+    public string ProcessCount
+    {
         get => _processCount;
         set => this.RaiseAndSetIfChanged(ref _processCount, value);
     }
@@ -325,7 +378,8 @@ public class ShellViewModel : ReactiveObject
         _timer.Start();
         IsLoading = true;
 
-        if (initCount is int num) {
+        if (initCount is int num)
+        {
             SetCount(num);
         }
     }

@@ -1,6 +1,6 @@
 ﻿using Avalonia.Platform.Storage;
 
-namespace Totk.ZStdTool.Helpers;
+namespace TotkZstdTool.Helpers;
 
 public enum BrowserMode { OpenFile, OpenFolder, SaveFile }
 
@@ -37,8 +37,10 @@ public class BrowserDialog
         _suggestedFileName = suggestedFileName;
         _instanceBrowserKey = instanceBrowserKey;
 
-        if (instanceBrowserKey != null) {
-            if (!Stashed.ContainsKey(instanceBrowserKey)) {
+        if (instanceBrowserKey != null)
+        {
+            if (!Stashed.ContainsKey(instanceBrowserKey))
+            {
                 Stashed.Add(instanceBrowserKey, new());
             }
         }
@@ -61,19 +63,23 @@ public class BrowserDialog
 
         IStorageProvider StorageProvider = App.VisualRoot!.StorageProvider;
 
-        object? result = _mode switch {
-            BrowserMode.OpenFolder => await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() {
+        object? result = _mode switch
+        {
+            BrowserMode.OpenFolder => await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+            {
                 Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
                 AllowMultiple = allowMultiple
             }),
-            BrowserMode.OpenFile => await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions() {
+            BrowserMode.OpenFile => await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+            {
                 Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
                 AllowMultiple = allowMultiple,
                 FileTypeFilter = LoadFileBrowserFilter(_filter)
             }),
-            BrowserMode.SaveFile => await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions() {
+            BrowserMode.SaveFile => await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+            {
                 Title = _title,
                 SuggestedStartLocation = GetLastDirectory(),
                 FileTypeChoices = LoadFileBrowserFilter(_filter),
@@ -82,36 +88,44 @@ public class BrowserDialog
             _ => throw new NotImplementedException()
         };
 
-        if (result is IReadOnlyList<IStorageFolder> folders && folders.Count > 0) {
+        if (result is IReadOnlyList<IStorageFolder> folders && folders.Count > 0)
+        {
             SetLastDirectory(folders[folders.Count - 1]);
             return folders.Select(folder => folder.Path.LocalPath);
         }
-        else if (result is IReadOnlyList<IStorageFile> files && files.Count > 0) {
+        else if (result is IReadOnlyList<IStorageFile> files && files.Count > 0)
+        {
             SetLastDirectory(await files[files.Count - 1].GetParentAsync());
             return files.Select(file => file.Path.LocalPath);
         }
-        else if (result is IStorageFile file) {
+        else if (result is IStorageFile file)
+        {
             SetLastDirectory(await file.GetParentAsync());
             return new string[1] {
                 file.Path.LocalPath
             };
         }
-        else {
+        else
+        {
             return null;
         }
     }
 
     internal void SetLastDirectory(IStorageFolder? folder)
     {
-        if (_mode == BrowserMode.SaveFile) {
+        if (_mode == BrowserMode.SaveFile)
+        {
             LastSaveDirectory = folder;
-            if (_instanceBrowserKey != null) {
+            if (_instanceBrowserKey != null)
+            {
                 Stashed[_instanceBrowserKey].SaveDirectory = folder;
             }
         }
-        else {
+        else
+        {
             LastOpenDirectory = folder;
-            if (_instanceBrowserKey != null) {
+            if (_instanceBrowserKey != null)
+            {
                 Stashed[_instanceBrowserKey].OpenDirectory = folder;
             }
         }
@@ -119,19 +133,25 @@ public class BrowserDialog
 
     internal IStorageFolder? GetLastDirectory()
     {
-        if (_mode == BrowserMode.SaveFile) {
-            if (_instanceBrowserKey != null) {
+        if (_mode == BrowserMode.SaveFile)
+        {
+            if (_instanceBrowserKey != null)
+            {
                 return Stashed[_instanceBrowserKey].SaveDirectory;
             }
-            else {
+            else
+            {
                 return LastSaveDirectory;
             }
         }
-        else {
-            if (_instanceBrowserKey != null) {
+        else
+        {
+            if (_instanceBrowserKey != null)
+            {
                 return Stashed[_instanceBrowserKey].OpenDirectory;
             }
-            else {
+            else
+            {
                 return LastOpenDirectory;
             }
         }
@@ -139,21 +159,26 @@ public class BrowserDialog
 
     internal static FilePickerFileType[] LoadFileBrowserFilter(string? filter = null)
     {
-        if (filter != null) {
-            try {
+        if (filter != null)
+        {
+            try
+            {
                 string[] groups = filter.Split('|');
                 FilePickerFileType[] types = new FilePickerFileType[groups.Length];
 
-                for (int i = 0; i < groups.Length; i++) {
+                for (int i = 0; i < groups.Length; i++)
+                {
                     string[] pair = groups[i].Split(':');
-                    types[i] = new(pair[0]) {
+                    types[i] = new(pair[0])
+                    {
                         Patterns = pair[1].Split(';')
                     };
                 }
 
                 return types;
             }
-            catch {
+            catch
+            {
                 throw new FormatException(
                     $"Could not parse filter arguments '{filter}'.\n" +
                     $"Example: \"Yaml Files:*.yml;*.yaml|All Files:*.*\"."

@@ -1,13 +1,14 @@
 ﻿using CommunityToolkit.HighPerformance.Buffers;
 using TotkCommon;
 
-namespace Totk.ZStdTool.Helpers;
+namespace TotkZstdTool.Helpers;
 
 public static class ZstdHelper
 {
     public static int GetDictioanryId(this string path, bool useDictionaries)
     {
-        return useDictionaries switch {
+        return useDictionaries switch
+        {
             false => -1,
             true => path.EndsWith(".rsizetable") || path.EndsWith("ZsDic.pack") ? -1 :
                     path.EndsWith(".bcett.byml") ? 3 :
@@ -31,7 +32,7 @@ public static class ZstdHelper
 
         size = Zstd.GetDecompressedSize(buffer.Span);
         SpanOwner<byte> decompressed = SpanOwner<byte>.Allocate(size);
-        TotkCommon.Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
+        Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
         return decompressed;
     }
 
@@ -51,7 +52,7 @@ public static class ZstdHelper
 
         size = Zstd.GetDecompressedSize(buffer.Span);
         SpanOwner<byte> decompressed = SpanOwner<byte>.Allocate(size);
-        TotkCommon.Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
+        Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
         return decompressed;
     }
 
@@ -60,7 +61,8 @@ public static class ZstdHelper
         string[] files = Directory.GetFiles(path, "*.zs", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         setCount?.Invoke(files.Length);
 
-        for (int i = 0; i < files.Length; i++) {
+        for (int i = 0; i < files.Length; i++)
+        {
             string file = files[i];
             using SpanOwner<byte> data = Decompress(file);
 
@@ -78,7 +80,8 @@ public static class ZstdHelper
         string[] files = Directory.GetFiles(path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         setCount?.Invoke(files.Length);
 
-        for (int i = 0; i < files.Length; i++) {
+        for (int i = 0; i < files.Length; i++)
+        {
             string file = files[i];
             using SpanOwner<byte> data = Compress(file, useDictionaries);
 

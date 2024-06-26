@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace Totk.ZStdTool;
+namespace TotkZstdTool;
 
 internal class Program
 {
@@ -11,13 +11,17 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        if (args.Length > 0) {
+        if (args.Length > 0)
+        {
             CommandProcessor.Process(args.ToList());
         }
-        else {
-#if WIN_X64
-            WindowHelper.SetWindowMode(WindowMode.Hidden);
-#endif
+        else
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowHelper.SetWindowMode(WindowMode.Hidden);
+            }
+
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
     }

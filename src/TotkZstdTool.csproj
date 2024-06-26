@@ -10,7 +10,6 @@
 	<DebugType>embedded</DebugType>
 	<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<DefineConstants Condition="'$(RuntimeIdentifier)'=='win-x64'">WIN_X64</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />

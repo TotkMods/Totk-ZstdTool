@@ -1,6 +1,6 @@
-﻿using Totk.ZStdTool.Helpers;
+﻿using TotkZstdTool.Helpers;
 
-namespace Totk.ZStdTool;
+namespace TotkZstdTool;
 
 public static class CommandProcessor
 {
@@ -10,15 +10,18 @@ public static class CommandProcessor
     public static void Process(List<string> args)
     {
         string[] files = args.Where(File.Exists).ToArray();
-        if (files.Length == args.Count) {
-            foreach (string file in files) {
+        if (files.Length == args.Count)
+        {
+            foreach (string file in files)
+            {
                 ProcessShellInput(file);
             }
 
             return;
         }
-        
-        if (args[0].AsFlag() == 'h') {
+
+        if (args[0].AsFlag() == 'h')
+        {
             Console.WriteLine("""
                 Compress a file:
                     c, compress <file-path> [-o|--output] [-d|--dictionaries] [-h|--help]
@@ -38,7 +41,8 @@ public static class CommandProcessor
             .Select((x, i) => (key: x.AsFlag(), value: args[args.IndexOf(x) + 1]))
             .ToDictionary(x => x.key, x => x.value);
 
-        Action<string, Dictionary<char, string>> command = args[0][0] switch {
+        Action<string, Dictionary<char, string>> command = args[0][0] switch
+        {
             'c' => Compress,
             'd' => Decompress,
             _ => throw new NotImplementedException(
@@ -55,10 +59,12 @@ public static class CommandProcessor
 
     public static void ProcessShellInput(string input)
     {
-        if (input.EndsWith(".zs")) {
+        if (input.EndsWith(".zs"))
+        {
             Decompress(input, new());
         }
-        else {
+        else
+        {
             Compress(input, new());
         }
     }
@@ -69,11 +75,13 @@ public static class CommandProcessor
         output ??= input + ".zs";
 
         bool useDictionaries = true;
-        if (flags.TryGetValue('d', out string? useDictionariesArg)) {
+        if (flags.TryGetValue('d', out string? useDictionariesArg))
+        {
             useDictionaries = useDictionariesArg.ToLower() is not "f" or "false" or "n" or "no";
         }
 
-        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory)) {
+        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory))
+        {
             Directory.CreateDirectory(directory);
         }
 
@@ -85,7 +93,8 @@ public static class CommandProcessor
         flags.TryGetValue('o', out string? output);
         output ??= Path.ChangeExtension(input, string.Empty);
 
-        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory)) {
+        if (Path.GetDirectoryName(output) is string directory && !string.IsNullOrEmpty(directory))
+        {
             Directory.CreateDirectory(directory);
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Totk.ZStdTool;
+namespace TotkZstdTool;
 
 public enum WindowMode : int { Hidden = 0, Visible = 5 }
 
