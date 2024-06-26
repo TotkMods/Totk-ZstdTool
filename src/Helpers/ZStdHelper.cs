@@ -11,8 +11,8 @@ public static class ZstdHelper
         {
             false => -1,
             true => path.EndsWith(".rsizetable") || path.EndsWith("ZsDic.pack") ? -1 :
-                    path.EndsWith(".bcett.byml") ? 3 :
-                    path.EndsWith(".pack") ? 2 : 1
+                    path.EndsWith(".bcett.byml") ? 2 :
+                    path.EndsWith(".pack") ? 3 : 1
         };
     }
 
