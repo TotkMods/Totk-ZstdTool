@@ -38,22 +38,21 @@ public static class ZstdHelper
 
     public static void Compress(string file, string output, bool useDictionaries)
     {
-        using SpanOwner<byte> compressed = Compress(file, useDictionaries);
+        Span<byte> compressed = Compress(file, useDictionaries);
         using FileStream fs = File.Create(output);
-        fs.Write(compressed.Span);
+        fs.Write(compressed);
     }
 
-    public static SpanOwner<byte> Compress(string file, bool useDictionaries)
+    public static Span<byte> Compress(string file, bool useDictionaries)
     {
         using FileStream fs = File.OpenRead(file);
         int size = Convert.ToInt32(fs.Length);
         using SpanOwner<byte> buffer = SpanOwner<byte>.Allocate(size);
         fs.Read(buffer.Span);
 
-        size = Zstd.GetDecompressedSize(buffer.Span);
-        SpanOwner<byte> decompressed = SpanOwner<byte>.Allocate(size);
-        Totk.Zstd.Decompress(buffer.Span, decompressed.Span);
-        return decompressed;
+        SpanOwner<byte> compressed = SpanOwner<byte>.Allocate(size);
+        size = Totk.Zstd.Compress(buffer.Span, compressed.Span, file.GetDictioanryId(useDictionaries));
+        return compressed.Span[..size];
     }
 
     public static void DecompressFolder(string path, string output, bool recursive, Action<int>? setCount = null, Action<int>? updateCount = null)
@@ -83,12 +82,12 @@ public static class ZstdHelper
         for (int i = 0; i < files.Length; i++)
         {
             string file = files[i];
-            using SpanOwner<byte> data = Compress(file, useDictionaries);
+            Span<byte> compresses = Compress(file, useDictionaries);
 
             string outputFile = Path.Combine(output, Path.GetRelativePath(path, $"{file}.zs"));
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
             using FileStream fs = File.Create(outputFile);
-            fs.Write(data.Span);
+            fs.Write(compresses);
 
             updateCount?.Invoke(i + 1);
         }
