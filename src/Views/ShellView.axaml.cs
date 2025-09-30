@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
@@ -12,7 +13,7 @@ public partial class ShellView : AppWindow
         InitializeComponent();
 
         Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://TotkZstdTool/Assets/icon.ico")));
-        Icon = bitmap.CreateScaledBitmap(new(48, 48), BitmapInterpolationMode.HighQuality);
+        Icon = bitmap.CreateScaledBitmap(new PixelSize(48, 48));
 
         FileNameEntry.AddHandler(DragDrop.DropEvent, DragDropEvent);
         FolderNameEntry.AddHandler(DragDrop.DropEvent, DragDropEvent);

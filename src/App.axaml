@@ -1,8 +1,8 @@
-<Application x:Class="TotkZstdTool.App"
-             xmlns="https://github.com/avaloniaui"
+<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:TotkZstdTool"
-             xmlns:sty="using:FluentAvalonia.Styling">
+             x:Class="TotkZstdTool.App"
+             xmlns:sty="using:FluentAvalonia.Styling"
+             RequestedThemeVariant="Default">
     <Application.Styles>
         <sty:FluentAvaloniaTheme />
     </Application.Styles>

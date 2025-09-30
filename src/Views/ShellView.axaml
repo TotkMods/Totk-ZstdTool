@@ -4,6 +4,7 @@
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
+              xmlns:viewModels="clr-namespace:TotkZstdTool.ViewModels"
               Title="Totk zStandard Tool"
               Width="580"
               Height="350"
@@ -11,6 +12,7 @@
               MinHeight="350"
               MaxWidth="650"
               MaxHeight="450"
+              x:DataType="viewModels:ShellViewModel"
               d:DesignHeight="450"
               d:DesignWidth="800"
               mc:Ignorable="d">
