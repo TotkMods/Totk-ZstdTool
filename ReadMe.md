@@ -29,6 +29,17 @@ To use the Totk Decompression/Compression Tool, follow these steps:
 1. Browse for a `.zs` file located in your Totk game dump.
 2. Click on the `Decompress` button to decompress the file and save the raw output to your computer.
 
+## Right-Click Context Menu
+
+To get `.zs` compress/decompress commands in the Windows Explorer right-click menu (like 7-Zip):
+
+1. Open the app and go to `Settings`.
+2. Check `Add 'Compress'/'Decompress' to the right-click menu` and click `Save`.
+
+This adds a `Decompress with TotK Zstd Tool` entry to `.zs` files, and a `Compress with TotK Zstd Tool` entry to every other file. Uncheck the box (or run `TotkZstdTool.exe uninstall-context-menu` from the command line) to remove them. The entries are registered system-wide (`HKEY_LOCAL_MACHINE`), so you'll get a UAC prompt to approve (this is required because Windows 11 (24H2+) silently drops per-user context-menu registrations from the right-click UI.) 
+
+They can also be added/removed directly from the command line with `install-context-menu` / `uninstall-context-menu`.
+
 ## Command Line Usage
 
 > **Note:** Before using the command line interface (CLI) tools, make sure you have set up the game paths in the user interface.

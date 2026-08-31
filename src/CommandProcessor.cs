@@ -6,6 +6,7 @@ public static class CommandProcessor
 {
     // c|compress <file-path> [-o|--output] [-h|--help]
     // d|decompress <file-path> [-o|--output] [-h|--help]
+    // install-context-menu | uninstall-context-menu
 
     public static void Process(List<string> args)
     {
@@ -20,6 +21,32 @@ public static class CommandProcessor
             return;
         }
 
+        if (args[0].Equals("install-context-menu", StringComparison.OrdinalIgnoreCase))
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                ContextMenuHelper.Install();
+                Console.WriteLine("Added 'Compress'/'Decompress' entries to the Explorer right-click menu.");
+            }
+            else
+            {
+                Console.WriteLine("The Explorer right-click menu is only available on Windows.");
+            }
+
+            return;
+        }
+
+        if (args[0].Equals("uninstall-context-menu", StringComparison.OrdinalIgnoreCase))
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                ContextMenuHelper.Uninstall();
+                Console.WriteLine("Removed the Explorer right-click menu entries.");
+            }
+
+            return;
+        }
+
         if (args[0].AsFlag() == 'h')
         {
             Console.WriteLine("""
@@ -28,6 +55,10 @@ public static class CommandProcessor
 
                 Decompress a file:
                     d, decompress <file-path> [-o|--output] [-h|--help]
+
+                Add/remove Explorer right-click menu entries:
+                    install-context-menu
+                    uninstall-context-menu
 
                 Print this help message:
                     -h, --help
