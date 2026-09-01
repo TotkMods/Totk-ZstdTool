@@ -13,22 +13,7 @@ internal class Program
     {
         if (args.Length > 0)
         {
-            try
-            {
-                CommandProcessor.Process(args.ToList());
-            }
-            catch (Exception ex)
-            {
-                string logPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "TotkZstdTool", "error.log");
-
-                Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
-                File.WriteAllText(logPath, $"{DateTime.Now}\nArgs: {string.Join(' ', args)}\n\n{ex}");
-
-                Console.Error.WriteLine(ex);
-                Environment.Exit(1);
-            }
+            CommandProcessor.Process(args.ToList());
         }
         else
         {

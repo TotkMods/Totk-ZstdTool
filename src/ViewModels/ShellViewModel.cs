@@ -280,74 +280,59 @@ public class ShellViewModel : ReactiveObject
 
     public async Task ShowSettings()
     {
-        try
+        bool contextMenuInstalled = OperatingSystem.IsWindows() && ContextMenuHelper.IsInstalled();
+
+        Button contextMenuButton = new()
         {
-            bool contextMenuInstalled = OperatingSystem.IsWindows() && ContextMenuHelper.IsInstalled();
+            Content = contextMenuInstalled ? "Remove from Right-Click Menu" : "Add to Right-Click Menu",
+            IsEnabled = OperatingSystem.IsWindows(), // yes, I'm aware this is a weird way to do it. but it works, and on Linux or Mac it won't do anything harmful.
+        };
 
-            ContentDialog dlg = new()
+        contextMenuButton.Click += (s, e) =>
+        {
+            if (contextMenuInstalled)
             {
-                Content = new ScrollViewer
-                {
-                    MaxHeight = 250,
-                    Content = new StackPanel
-                    {
-                        Margin = new(0, 0, 15, 0),
-                        Spacing = 10,
-                        Children = {
-                            new TextBox {
-                                Text = TotkCommon.Totk.Config.GamePath,
-                                Watermark = "Game Path",
-                                UseFloatingWatermark = true,
-                            },
-                            new CheckBox {
-                                Content = "Add 'Compress'/'Decompress' to the right-click menu",
-                                IsChecked = contextMenuInstalled,
-                                IsEnabled = OperatingSystem.IsWindows(),
-                            },
-                        }
-                    }
-                },
-                DefaultButton = ContentDialogButton.Primary,
-                PrimaryButtonText = "Save",
-                SecondaryButtonText = "Cancel",
-                Title = "Settings"
-            };
-
-            if (await dlg.ShowAsync() == ContentDialogResult.Primary)
+                ContextMenuHelper.Uninstall();
+            }
+            else
             {
-                var stack = (dlg.Content as ScrollViewer)!.Content as StackPanel;
-                TotkCommon.Totk.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
-                TotkCommon.Totk.Config.Save();
+                ContextMenuHelper.Install();
+            }
 
-                bool wantContextMenu = (stack.Children[1] as CheckBox)!.IsChecked ?? false;
-                if (OperatingSystem.IsWindows() && wantContextMenu != contextMenuInstalled)
+            contextMenuInstalled = ContextMenuHelper.IsInstalled();
+            contextMenuButton.Content = contextMenuInstalled ? "Remove from Right-Click Menu" : "Add to Right-Click Menu";
+        };
+
+        ContentDialog dlg = new()
+        {
+            Content = new ScrollViewer
+            {
+                MaxHeight = 250,
+                Content = new StackPanel
                 {
-                    if (wantContextMenu)
-                    {
-                        ContextMenuHelper.Install();
-                    }
-                    else
-                    {
-                        ContextMenuHelper.Uninstall();
+                    Margin = new(0, 0, 15, 0),
+                    Spacing = 10,
+                    Children = {
+                        new TextBox {
+                            Text = TotkCommon.Totk.Config.GamePath,
+                            Watermark = "Game Path",
+                            UseFloatingWatermark = true,
+                        },
+                        contextMenuButton,
                     }
                 }
-            }
-        }
-        catch (Exception ex)
-        {
-            ContentDialog dlg = new()
-            {
-                Content = new TextBox
-                {
-                    MaxHeight = 250,
-                    Text = ex.ToString(),
-                    IsReadOnly = true,
-                },
-                PrimaryButtonText = "OK",
-                Title = "Unhandled Exception"
-            };
+            },
+            DefaultButton = ContentDialogButton.Primary,
+            PrimaryButtonText = "Save",
+            SecondaryButtonText = "Cancel",
+            Title = "Settings"
+        };
 
-            await dlg.ShowAsync();
+        if (await dlg.ShowAsync() == ContentDialogResult.Primary)
+        {
+            var stack = (dlg.Content as ScrollViewer)!.Content as StackPanel;
+            TotkCommon.Totk.Config.GamePath = (stack!.Children[0] as TextBox)!.Text!;
+            TotkCommon.Totk.Config.Save();
         }
     }
 

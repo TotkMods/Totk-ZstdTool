@@ -9,8 +9,11 @@ namespace TotkZstdTool.Helpers;
 [SupportedOSPlatform("windows")]
 public static class ContextMenuHelper
 {
-    private const string CompressKey = @"SOFTWARE\Classes\*\shell\TotkZstdTool.Compress";
-    private const string DecompressKey = @"SOFTWARE\Classes\SystemFileAssociations\.zs\shell\TotkZstdTool.Decompress";
+    private const string CompressClass = "*";
+    private const string DecompressClass = @"SystemFileAssociations\.zs";
+
+    private const string CompressName = "compress";
+    private const string DecompressName = "decompress";
 
     public static bool IsInstalled()
     {
@@ -19,8 +22,8 @@ public static class ContextMenuHelper
             return false;
         }
 
-        using RegistryKey? compress = Registry.LocalMachine.OpenSubKey(CompressKey);
-        using RegistryKey? decompress = Registry.LocalMachine.OpenSubKey(DecompressKey);
+        using RegistryKey? compress = Registry.ClassesRoot.OpenSubKey($@"{CompressClass}\shell\totk\shell\{CompressName}");
+        using RegistryKey? decompress = Registry.ClassesRoot.OpenSubKey($@"{DecompressClass}\shell\totk\shell\{DecompressName}");
         return compress is not null && decompress is not null;
     }
 
@@ -89,7 +92,8 @@ public static class ContextMenuHelper
     {
         string exe = Environment.ProcessPath!;
 
-        using (RegistryKey key = Registry.LocalMachine.CreateSubKey(CompressKey))
+        using (RegistryKey shell = GetTotkShell(CompressClass))
+        using (RegistryKey key = shell.CreateSubKey(CompressName))
         {
             key.SetValue(string.Empty, "Compress with TotK Zstd Tool");
             key.SetValue("Icon", $"\"{exe}\",0");
@@ -99,7 +103,8 @@ public static class ContextMenuHelper
             command.SetValue(string.Empty, $"\"{exe}\" compress \"%1\"");
         }
 
-        using (RegistryKey key = Registry.LocalMachine.CreateSubKey(DecompressKey))
+        using (RegistryKey shell = GetTotkShell(DecompressClass))
+        using (RegistryKey key = shell.CreateSubKey(DecompressName))
         {
             key.SetValue(string.Empty, "Decompress with TotK Zstd Tool");
             key.SetValue("Icon", $"\"{exe}\",0");
@@ -111,7 +116,22 @@ public static class ContextMenuHelper
 
     private static void UninstallCore()
     {
-        Registry.LocalMachine.DeleteSubKeyTree(CompressKey, throwOnMissingSubKey: false);
-        Registry.LocalMachine.DeleteSubKeyTree(DecompressKey, throwOnMissingSubKey: false);
+        DeleteEntry(CompressClass, CompressName);
+        DeleteEntry(DecompressClass, DecompressName);
+    }
+
+    private static RegistryKey GetTotkShell(string cls)
+    {
+        using RegistryKey root = Registry.ClassesRoot.CreateSubKey($@"{cls}\shell\totk");
+        root.SetValue("MUIVerb", "TotK", RegistryValueKind.String);
+        root.SetValue("SubCommands", string.Empty, RegistryValueKind.String);
+
+        return root.CreateSubKey("shell");
+    }
+
+    private static void DeleteEntry(string cls, string name)
+    {
+        using RegistryKey? shell = Registry.ClassesRoot.OpenSubKey($@"{cls}\shell\totk\shell", writable: true);
+        shell?.DeleteSubKeyTree(name, throwOnMissingSubKey: false);
     }
 }
