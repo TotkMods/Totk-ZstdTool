@@ -84,7 +84,7 @@ public static class ContextMenuHelper
         }
         catch (Win32Exception)
         {
-            // The user declined the UAC prompt. dummy..
+            // The user declined the UAC prompt.
         }
     }
 
