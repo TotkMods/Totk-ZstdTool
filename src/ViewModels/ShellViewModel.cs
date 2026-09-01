@@ -278,8 +278,31 @@ public class ShellViewModel : ReactiveObject
         }
     }
 
-    public static async Task ShowSettings()
+    public async Task ShowSettings()
     {
+        bool contextMenuInstalled = OperatingSystem.IsWindows() && ContextMenuHelper.IsInstalled();
+
+        Button contextMenuButton = new()
+        {
+            Content = contextMenuInstalled ? "Remove from Right-Click Menu" : "Add to Right-Click Menu",
+            IsVisible = OperatingSystem.IsWindows(),
+        };
+
+        contextMenuButton.Click += (s, e) =>
+        {
+            if (contextMenuInstalled)
+            {
+                ContextMenuHelper.Uninstall();
+            }
+            else
+            {
+                ContextMenuHelper.Install();
+            }
+
+            contextMenuInstalled = ContextMenuHelper.IsInstalled();
+            contextMenuButton.Content = contextMenuInstalled ? "Remove from Right-Click Menu" : "Add to Right-Click Menu";
+        };
+
         ContentDialog dlg = new()
         {
             Content = new ScrollViewer
@@ -295,6 +318,7 @@ public class ShellViewModel : ReactiveObject
                             Watermark = "Game Path",
                             UseFloatingWatermark = true,
                         },
+                        contextMenuButton,
                     }
                 }
             },
