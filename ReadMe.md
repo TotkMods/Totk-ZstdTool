@@ -31,12 +31,12 @@ To use the Totk Decompression/Compression Tool, follow these steps:
 
 ## Right-Click Context Menu
 
-To get `.zs` compress/decompress commands in the Windows Explorer right-click menu (like 7-Zip):
+To get a `.zs` compress/decompress command in the Windows Explorer right-click menu (like 7-Zip):
 
 1. Open the app and go to `Settings`.
-2. Check `Add 'Compress'/'Decompress' to the right-click menu` and click `Save`.
+2. Click `Add to Right-Click Menu`.
 
-This adds a `Decompress with TotK Zstd Tool` entry to `.zs` files, and a `Compress with TotK Zstd Tool` entry to every other file. Uncheck the box (or run `TotkZstdTool.exe uninstall-context-menu` from the command line) to remove them. The entries are registered system-wide (`HKEY_LOCAL_MACHINE`), so you'll get a UAC prompt to approve (this is required because Windows 11 (24H2+) silently drops per-user context-menu registrations from the right-click UI.) 
+This adds a `ZSTD De/Compress` entry to the `TotK` submenu for every file, which compresses or decompresses depending on the file's extension. Click `Remove from Right-Click Menu` (or run `TotkZstdTool.exe uninstall-context-menu` from the command line) to remove it. The entry is registered system-wide (`HKEY_CLASSES_ROOT`), so you'll get a UAC prompt to approve (this is required because Windows 11 (24H2+) silently drops per-user context-menu registrations from the right-click UI.) It shares its registry key with [TotkRegistryToolkit](https://github.com/ArchLeaders/TotkRegistryToolkit)'s own ZSTD feature, so installing one won't duplicate the other.
 
 They can also be added/removed directly from the command line with `install-context-menu` / `uninstall-context-menu`.
 

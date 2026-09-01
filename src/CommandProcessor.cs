@@ -26,7 +26,7 @@ public static class CommandProcessor
             if (OperatingSystem.IsWindows())
             {
                 ContextMenuHelper.Install();
-                Console.WriteLine("Added 'Compress'/'Decompress' entries to the Explorer right-click menu.");
+                Console.WriteLine("Added a 'ZSTD De/Compress' entry to the Explorer right-click menu.");
             }
             else
             {

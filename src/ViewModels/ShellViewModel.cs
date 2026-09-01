@@ -285,7 +285,7 @@ public class ShellViewModel : ReactiveObject
         Button contextMenuButton = new()
         {
             Content = contextMenuInstalled ? "Remove from Right-Click Menu" : "Add to Right-Click Menu",
-            IsEnabled = OperatingSystem.IsWindows(), // yes, I'm aware this is a weird way to do it. but it works, and on Linux or Mac it won't do anything harmful.
+            IsVisible = OperatingSystem.IsWindows(),
         };
 
         contextMenuButton.Click += (s, e) =>
